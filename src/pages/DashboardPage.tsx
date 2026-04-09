@@ -1,0 +1,249 @@
+import { useState, useEffect, useCallback, useRef } from 'react'
+import type { ChangeEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  getProcessos,
+  searchProcessos,
+  filterProcessos,
+  deleteProcesso,
+  getRelatorio,
+} from '../api'
+import type { Processo } from '../types'
+
+const STATUS_FILTROS = ['Em andamento', 'Aguardando', 'Concluído', 'Arquivado', 'EXPIRADO']
+
+function formatDate(iso: string): string {
+  if (!iso) return '—'
+  const [y, m, d] = iso.split('-')
+  return `${d}/${m}/${y}`
+}
+
+function statusClass(status: string): string {
+  const s = status?.toLowerCase() ?? ''
+  if (s === 'expirado') return 'badge badge-expirado'
+  if (s === 'concluído' || s === 'arquivado') return 'badge badge-ok'
+  if (s === 'aguardando') return 'badge badge-warn'
+  return 'badge badge-default'
+}
+
+export default function DashboardPage() {
+  const navigate = useNavigate()
+  const [processos, setProcessos] = useState<Processo[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [keyword, setKeyword] = useState('')
+  const [filterStatus, setFilterStatus] = useState('')
+  const [apenasVencidos, setApenasVencidos] = useState(false)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [downloadingPdf, setDownloadingPdf] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const fetchAll = useCallback(async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await getProcessos()
+      setProcessos(res.data)
+    } catch {
+      setError('Não foi possível carregar os processos.')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchAll()
+  }, [fetchAll])
+
+  /* Busca debounced */
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (!keyword.trim() && !filterStatus && !apenasVencidos) {
+      fetchAll()
+      return
+    }
+    debounceRef.current = setTimeout(async () => {
+      setLoading(true)
+      setError('')
+      try {
+        if (keyword.trim() && !filterStatus && !apenasVencidos) {
+          const res = await searchProcessos(keyword.trim())
+          setProcessos(res.data)
+        } else {
+          const params: Record<string, string | boolean> = {}
+          if (filterStatus) params.status = filterStatus
+          if (apenasVencidos) params.prazoExpirado = true
+          if (keyword.trim()) params.keyword = keyword.trim()
+          const res = await filterProcessos(params)
+          setProcessos(res.data)
+        }
+      } catch {
+        setError('Erro ao buscar processos.')
+      } finally {
+        setLoading(false)
+      }
+    }, 400)
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyword, filterStatus, apenasVencidos])
+
+  async function handleDelete(numero: string, id: number) {
+    if (!confirm(`Excluir processo ${numero}? Esta ação não pode ser desfeita.`)) return
+    setDeletingId(id)
+    try {
+      await deleteProcesso(numero)
+      setProcessos((prev) => prev.filter((p) => p.id !== id))
+    } catch {
+      alert('Não foi possível excluir o processo.')
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  async function handlePdf() {
+    setDownloadingPdf(true)
+    try {
+      const params: Record<string, string | boolean> = {}
+      if (filterStatus) params.status = filterStatus
+      if (apenasVencidos) params.prazoExpirado = true
+      if (keyword.trim()) params.keyword = keyword.trim()
+      const res = await getRelatorio(params)
+      const url = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'relatorio-processos.pdf'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      alert('Erro ao gerar relatório PDF.')
+    } finally {
+      setDownloadingPdf(false)
+    }
+  }
+
+  function handleFilterStatusChange(e: ChangeEvent<HTMLSelectElement>) {
+    setFilterStatus(e.target.value)
+  }
+
+  return (
+    <>
+      <div className="page-header">
+        <h2 className="page-title">Processos</h2>
+        <div className="page-actions">
+          <button className="btn btn-secondary btn-sm" onClick={handlePdf} disabled={downloadingPdf}>
+            {downloadingPdf ? 'Gerando...' : '📄 Gerar PDF'}
+          </button>
+          <button className="btn btn-primary btn-sm" onClick={() => navigate('/processos/novo')}>
+            + Novo Processo
+          </button>
+        </div>
+      </div>
+
+      <div className="filters-bar">
+        <input
+          className="search-input"
+          type="search"
+          placeholder="Buscar por número, tipo, origem, unidade..."
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+        />
+        <select value={filterStatus} onChange={handleFilterStatusChange}>
+          <option value="">Todos os status</option>
+          {STATUS_FILTROS.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={apenasVencidos}
+            onChange={(e) => setApenasVencidos(e.target.checked)}
+          />
+          Apenas Vencidos
+        </label>
+        <button className="btn btn-secondary btn-sm" onClick={fetchAll} title="Limpar filtros">
+          ↺ Limpar
+        </button>
+      </div>
+
+      {error && <p className="message message-error">{error}</p>}
+
+      {loading ? (
+        <p className="loading">Carregando...</p>
+      ) : processos.length === 0 ? (
+        <div className="empty-state">
+          <p>Nenhum processo encontrado.</p>
+          <button className="btn btn-primary btn-sm" onClick={() => navigate('/processos/novo')}>
+            Cadastrar primeiro processo
+          </button>
+        </div>
+      ) : (
+        <div className="table-wrapper">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Número</th>
+                <th>Tipo</th>
+                <th>Origem</th>
+                <th>Unidade Atual</th>
+                <th>Status</th>
+                <th>Prazo Final</th>
+                <th>Urgência</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {processos.map((p) => (
+                <tr key={p.id} className={p.alertaUrgencia ? 'row-urgente' : ''}>
+                  <td className="mono">{p.numeroProcesso}</td>
+                  <td>{p.tipoProcesso}</td>
+                  <td>{p.origem}</td>
+                  <td>{p.unidadeAtual}</td>
+                  <td>
+                    <span className={statusClass(p.status)}>{p.status}</span>
+                  </td>
+                  <td>{formatDate(p.dataPrazoFinal)}</td>
+                  <td>
+                    {p.alertaUrgencia ? (
+                      <span className="badge badge-urgente">⚠ Urgente</span>
+                    ) : (
+                      <span className="badge badge-ok">Normal</span>
+                    )}
+                  </td>
+                  <td className="actions-cell">
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() =>
+                        navigate(`/processos/editar/${encodeURIComponent(p.numeroProcesso)}`, {
+                          state: { processo: p },
+                        })
+                      }
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => navigate(`/processos/historico/${p.id}`)}
+                    >
+                      Histórico
+                    </button>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      disabled={deletingId === p.id}
+                      onClick={() => handleDelete(p.numeroProcesso, p.id)}
+                    >
+                      {deletingId === p.id ? '...' : 'Excluir'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="table-count">{processos.length} processo(s) encontrado(s)</p>
+        </div>
+      )}
+    </>
+  )
+}

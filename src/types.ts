@@ -1,0 +1,30 @@
+export type Role = 'ADMIN' | 'USER'
+
+export interface Processo {
+  id: number
+  numeroProcesso: string
+  tipoProcesso: string
+  origem: string
+  unidadeAtual: string
+  status: string
+  dataPrazoFinal: string
+  observacao?: string
+  alertaUrgencia?: boolean
+}
+
+export interface HistoricoItem {
+  id: number
+  dataAtualizacao: string
+  usuarioLogin: string
+  statusAnterior: string
+  statusNovo: string
+  unidadeAnterior: string
+  unidadeNova: string
+  observacaoDaMudanca?: string
+}
+
+export interface Usuario {
+  id: number
+  login: string
+  role: Role
+}
