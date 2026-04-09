@@ -1,38 +1,89 @@
-# Gestao SEI Frontend
+# 🖥️ Gestão SEI Frontend
 
-Frontend da aplicação Gestao SEI, construído com React, TypeScript e Vite.
+[![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-5-646cff?style=flat-square&logo=vite)](https://vitejs.dev/)
 
-## Requisitos
+> Interface web do sistema Gestão SEI para controle de prazos e tramitação de processos.
 
-- Node.js 20 ou superior
-- npm 10 ou superior
-- Backend da aplicação disponível em <http://localhost:8081>
+## 📋 Sobre o Projeto
 
-## Executando localmente
+O **Gestão SEI Frontend** é uma SPA (Single Page Application) construída com React 19 e TypeScript que consome a API REST do backend. Oferece uma interface completa para gerenciamento de processos administrativos do SEI, com autenticação JWT, controle de perfis e geração de relatórios em PDF.
+
+## ✨ Funcionalidades
+
+### 🔐 **Autenticação**
+- Login com JWT (token persistido em `localStorage`).
+- Cadastro de novo usuário e reset de senha via tela de login.
+- Proteção de rotas — usuário não autenticado é redirecionado para `/login`.
+
+### 📋 **Gestão de Processos**
+- Listagem completa de processos com indicadores visuais de urgência e status.
+- **Busca em tempo real** por número, tipo, origem, unidade ou observação (debounce 400 ms).
+- **Filtros** por status e prazo vencido.
+- Cadastro e edição de processos com validação de campos (incluindo padrão `9999.9999/9999999-9`).
+- Exclusão com confirmação.
+- Visualização do histórico de tramitação com diff visual (antes → depois).
+- **Download de relatório PDF** com os filtros ativos.
+
+### 👥 **Gestão de Usuários** (ADMIN)
+- Listagem, criação e edição de usuários.
+- Exclusão de usuário (bloqueada pelo backend se houver histórico de processos).
+- Redefinição de senha de qualquer usuário (sem necessidade de senha atual).
+
+### 🔑 **Troca de Senha**
+- Disponível para todos os perfis via botão no menu lateral.
+- USER deve informar a senha atual; ADMIN pode trocar diretamente.
+
+## 🏗️ Estrutura Principal
+
+```
+src/
+├── App.tsx              # AuthContext, AuthProvider, useAuth, BrowserRouter + rotas
+├── api.ts               # Cliente Axios com interceptor JWT e todas as funções de API
+├── types.ts             # Interfaces TypeScript (Processo, HistoricoItem, Usuario, Role)
+├── index.css            # Design system: tokens, sidebar, tabelas, badges, modais
+├── components/
+│   ├── Layout.tsx       # Shell da aplicação: sidebar, navegação, modal de senha
+│   └── ProtectedRoute.tsx # Guarda de rota por autenticação
+└── pages/
+    ├── LoginPage.tsx        # Login, criar conta, reset de senha
+    ├── DashboardPage.tsx    # Listagem de processos, busca, filtros, PDF
+    ├── ProcessoFormPage.tsx # Criar / editar processo
+    ├── HistoricoPage.tsx    # Histórico de tramitação
+    └── UsuariosPage.tsx     # Gestão de usuários (ADMIN)
+```
+
+## 🚀 Como Executar
+
+**Pré-requisito:** Backend rodando em `http://localhost:8081` (ver [gestao-sei-backend](https://github.com/GestaoSEI/gestao-sei-backend)).
 
 ```bash
 npm install
 npm run dev
 ```
 
-O servidor de desenvolvimento sobe em <http://localhost:5173> e encaminha chamadas iniciadas por /api para o backend local configurado em [vite.config.ts](vite.config.ts).
+A aplicação sobe em [http://localhost:5173](http://localhost:5173).  
+Chamadas a `/api/*` são redirecionadas ao backend pelo proxy do Vite (configurado em [vite.config.ts](vite.config.ts)).
 
-## Scripts disponíveis
+## 📜 Scripts Disponíveis
 
-- npm run dev: inicia o servidor de desenvolvimento
-- npm run build: gera o build de produção
-- npm run lint: executa a análise estática com ESLint
-- npm run preview: serve localmente o build gerado
+| Script | Descrição |
+|--------|-----------|
+| `npm run dev` | Servidor de desenvolvimento com hot-reload |
+| `npm run build` | Build de produção em `dist/` |
+| `npm run preview` | Serve localmente o build gerado |
+| `npm run lint` | Análise estática com ESLint |
 
-## Estrutura principal
+## ⚙️ Requisitos
 
-- [src/App.tsx](src/App.tsx): tela de login e criação de usuários
-- [src/main.tsx](src/main.tsx): bootstrap da aplicação React
-- [src/index.css](src/index.css): estilos globais da interface
-- [vite.config.ts](vite.config.ts): configuração do Vite e proxy para o backend
+- Node.js 20 ou superior
+- npm 10 ou superior
+- Backend disponível em `http://localhost:8081`
 
-## Integração com backend
+## 📄 Licença
 
-As requisições HTTP usam o prefixo /api no frontend. Durante o desenvolvimento, esse prefixo é redirecionado para <http://localhost:8081>.
+Este projeto está licenciado sob a **MIT License**.
 
-Se o backend estiver em outro endereço, ajuste o proxy em [vite.config.ts](vite.config.ts).
+---
+Made with ❤️ by Gilvaneide Medeiros
