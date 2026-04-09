@@ -12,6 +12,9 @@ function App() {
   const [tab, setTab] = useState<'login' | 'register'>('login')
   const [loginValue, setLoginValue] = useState('')
   const [passwordValue, setPasswordValue] = useState('')
+  const [showReset, setShowReset] = useState(false)
+  const [resetLogin, setResetLogin] = useState('')
+  const [resetPassword, setResetPassword] = useState('')
   const [newLogin, setNewLogin] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [newRole, setNewRole] = useState<Role>('USER')
@@ -32,6 +35,11 @@ function App() {
     [newLogin, newPassword, newRole]
   )
 
+  const canReset = useMemo(
+    () => resetLogin.trim().length > 0 && resetPassword.trim().length >= 4,
+    [resetLogin, resetPassword]
+  )
+
   async function handleLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!canLogin) {
@@ -46,12 +54,17 @@ function App() {
         login: loginValue.trim(),
         senha: passwordValue
       })
-      const jwt = response.data?.token ?? ''
+      const jwt = response.data?.token?.trim()
+      if (!jwt) {
+        throw new Error('Token ausente na resposta de login.')
+      }
+
       setToken(jwt)
       localStorage.setItem('gestaoSeiToken', jwt)
       setMessage('Login realizado com sucesso.')
     } catch {
       setToken('')
+      localStorage.removeItem('gestaoSeiToken')
       setMessage('Falha no login. Verifique login e senha.')
     } finally {
       setLoading(false)
@@ -80,6 +93,32 @@ function App() {
       setNewPassword('')
     } catch {
       setMessage('Não foi possível criar usuário. Login pode já existir.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleResetPassword(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!canReset) {
+      setMessage('Informe login e nova senha (min. 4) para resetar.')
+      return
+    }
+
+    setLoading(true)
+    setMessage('')
+    try {
+      await api.post('/auth/reset-password', {
+        login: resetLogin.trim(),
+        novaSenha: resetPassword
+      })
+      setMessage('Senha resetada com sucesso. Faça login com a nova senha.')
+      setLoginValue(resetLogin.trim())
+      setPasswordValue('')
+      setShowReset(false)
+      setResetPassword('')
+    } catch {
+      setMessage('Não foi possível resetar a senha. Verifique o login informado.')
     } finally {
       setLoading(false)
     }
@@ -114,30 +153,68 @@ function App() {
         </div>
 
         {tab === 'login' ? (
-          <form className="form" onSubmit={handleLogin}>
-            <label htmlFor="login">Login</label>
-            <input
-              id="login"
-              value={loginValue}
-              onChange={(event) => setLoginValue(event.target.value)}
-              placeholder="ex.: admin"
-              autoComplete="username"
-            />
+          <>
+            <form className="form" onSubmit={handleLogin}>
+              <label htmlFor="login">Login</label>
+              <input
+                id="login"
+                value={loginValue}
+                onChange={(event) => setLoginValue(event.target.value)}
+                placeholder="ex.: admin"
+                autoComplete="username"
+              />
 
-            <label htmlFor="senha">Senha</label>
-            <input
-              id="senha"
-              type="password"
-              value={passwordValue}
-              onChange={(event) => setPasswordValue(event.target.value)}
-              placeholder="sua senha"
-              autoComplete="current-password"
-            />
+              <label htmlFor="senha">Senha</label>
+              <input
+                id="senha"
+                type="password"
+                value={passwordValue}
+                onChange={(event) => setPasswordValue(event.target.value)}
+                placeholder="sua senha"
+                autoComplete="current-password"
+              />
 
-            <button type="submit" className="primary" disabled={!canLogin || loading}>
-              {loading ? 'Entrando...' : 'Entrar'}
+              <button type="submit" className="primary" disabled={!canLogin || loading}>
+                {loading ? 'Entrando...' : 'Entrar'}
+              </button>
+            </form>
+
+            <button
+              type="button"
+              className="ghost"
+              onClick={() => setShowReset((value) => !value)}
+              disabled={loading}
+            >
+              {showReset ? 'Cancelar reset de senha' : 'Esqueci a senha / Resetar senha'}
             </button>
-          </form>
+
+            {showReset && (
+              <form className="form reset-form" onSubmit={handleResetPassword}>
+                <label htmlFor="reset-login">Login para reset</label>
+                <input
+                  id="reset-login"
+                  value={resetLogin}
+                  onChange={(event) => setResetLogin(event.target.value)}
+                  placeholder="ex.: usuario@dominio.com"
+                  autoComplete="username"
+                />
+
+                <label htmlFor="reset-senha">Nova senha</label>
+                <input
+                  id="reset-senha"
+                  type="password"
+                  value={resetPassword}
+                  onChange={(event) => setResetPassword(event.target.value)}
+                  placeholder="mínimo 4 caracteres"
+                  autoComplete="new-password"
+                />
+
+                <button type="submit" className="primary" disabled={!canReset || loading}>
+                  {loading ? 'Resetando...' : 'Resetar senha'}
+                </button>
+              </form>
+            )}
+          </>
         ) : (
           <form className="form" onSubmit={handleRegister}>
             <label htmlFor="novo-login">Login</label>
