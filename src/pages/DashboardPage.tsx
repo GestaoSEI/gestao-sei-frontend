@@ -10,7 +10,7 @@ import {
 } from '../api'
 import type { Processo } from '../types'
 
-const STATUS_FILTROS = ['Em andamento', 'Aguardando', 'Concluído', 'Arquivado', 'EXPIRADO']
+const STATUS_FILTROS = ['Em andamento', 'Respondido', 'Concluído', 'Arquivado', 'Expirado']
 
 function formatDate(iso: string): string {
   if (!iso) return '—'
@@ -22,7 +22,7 @@ function statusClass(status: string): string {
   const s = status?.toLowerCase() ?? ''
   if (s === 'expirado') return 'badge badge-expirado'
   if (s === 'concluído' || s === 'arquivado') return 'badge badge-ok'
-  if (s === 'aguardando') return 'badge badge-warn'
+  if (s === 'respondido') return 'badge badge-warn'
   return 'badge badge-default'
 }
 
@@ -174,10 +174,16 @@ export default function DashboardPage() {
         <p className="loading">Carregando...</p>
       ) : processos.length === 0 ? (
         <div className="empty-state">
-          <p>Nenhum processo encontrado.</p>
-          <button className="btn btn-primary btn-sm" onClick={() => navigate('/processos/novo')}>
-            Cadastrar primeiro processo
-          </button>
+          {keyword.trim() || filterStatus || apenasVencidos ? (
+            <p>Nenhum processo encontrado para os filtros aplicados.</p>
+          ) : (
+            <>
+              <p>Nenhum processo cadastrado.</p>
+              <button className="btn btn-primary btn-sm" onClick={() => navigate('/processos/novo')}>
+                Cadastrar primeiro processo
+              </button>
+            </>
+          )}
         </div>
       ) : (
         <div className="table-wrapper">

@@ -5,7 +5,7 @@ import { createProcesso, updateProcesso } from '../api'
 import type { Processo } from '../types'
 
 const NUMERO_PATTERN = /^\d{4}\.\d{4}\/\d{7}-\d{1}$/
-const STATUS_SUGESTOES = ['Em andamento', 'Aguardando', 'Concluído', 'Arquivado', 'EXPIRADO']
+const STATUS_SUGESTOES = ['Em andamento', 'Respondido', 'Concluído', 'Arquivado', 'Expirado']
 
 type FormData = {
   numeroProcesso: string
