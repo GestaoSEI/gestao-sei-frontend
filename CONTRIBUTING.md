@@ -144,4 +144,4 @@ Abra uma [Issue](https://github.com/GestaoSEI/gestao-sei-frontend/issues) com o 
 
 ---
 
-Made with ❤️ by [GestaoSEI](https://github.com/GestaoSEI)
+Made with ❤️ by Gilvaneide Medeiros
