@@ -117,9 +117,9 @@ export default function DashboardPage() {
   async function handlePdf() {
     setDownloadingPdf(true)
     try {
-      const params: Record<string, string | boolean> = {}
+      const params: Record<string, string> = {}
       if (filterStatus) params.status = filterStatus
-      if (apenasVencidos) params.prazoExpirado = true
+      if (apenasVencidos) params.prazoExpirado = 'true'
       if (keyword.trim()) params.keyword = keyword.trim()
       const res = await getRelatorio(params)
       const url = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
@@ -167,7 +167,7 @@ export default function DashboardPage() {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
         />
-        <select value={filterStatus} onChange={handleFilterStatusChange}>
+        <select value={filterStatus} onChange={handleFilterStatusChange} aria-label="Filtrar por status">
           <option value="">Todos os status</option>
           {STATUS_FILTROS.map((s) => (
             <option key={s} value={s}>{s}</option>

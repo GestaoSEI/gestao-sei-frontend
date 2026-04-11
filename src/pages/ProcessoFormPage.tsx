@@ -46,18 +46,18 @@ export default function ProcessoFormPage() {
   const processoFromState = location.state?.processo as Processo | undefined
   const isEdit = Boolean(params.numero)
 
-  // Se está editando mas não recebeu o processo pelo state, volta para a lista
-  if (isEdit && !processoFromState) {
-    navigate('/processos', { replace: true })
-    return null
-  }
-
   const [form, setForm] = useState<FormData>(
     processoFromState ? fromProcesso(processoFromState) : EMPTY_FORM
   )
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({})
   const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Se está editando mas não recebeu o processo pelo state, volta para a lista
+  if (isEdit && !processoFromState) {
+    navigate('/processos', { replace: true })
+    return null
+  }
 
   function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target

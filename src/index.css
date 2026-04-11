@@ -357,6 +357,7 @@ textarea:focus {
   justify-content: center;
   z-index: 100;
   padding: 20px;
+  -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
 }
 
