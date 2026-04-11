@@ -13,11 +13,13 @@ O **Gestão SEI Frontend** é uma SPA (Single Page Application) construída com 
 ## ✨ Funcionalidades
 
 ### 🔐 **Autenticação**
+
 - Login com JWT (token persistido em `localStorage`).
 - Cadastro de novo usuário e reset de senha via tela de login.
 - Proteção de rotas — usuário não autenticado é redirecionado para `/login`.
 
 ### 📋 **Gestão de Processos**
+
 - Listagem completa de processos com indicadores visuais de urgência e status.
 - **Busca em tempo real** por número, tipo, origem, unidade ou observação (debounce 400 ms).
 - **Filtros** por status e prazo vencido.
@@ -27,17 +29,19 @@ O **Gestão SEI Frontend** é uma SPA (Single Page Application) construída com 
 - **Download de relatório PDF** com os filtros ativos.
 
 ### 👥 **Gestão de Usuários** (ADMIN)
+
 - Listagem, criação e edição de usuários.
 - Exclusão de usuário (bloqueada pelo backend se houver histórico de processos).
 - Redefinição de senha de qualquer usuário (sem necessidade de senha atual).
 
 ### 🔑 **Troca de Senha**
+
 - Disponível para todos os perfis via botão no menu lateral.
 - USER deve informar a senha atual; ADMIN pode trocar diretamente.
 
 ## 🏗️ Estrutura Principal
 
-```
+```text
 src/
 ├── App.tsx              # AuthContext, AuthProvider, useAuth, BrowserRouter + rotas
 ├── api.ts               # Cliente Axios com interceptor JWT e todas as funções de API

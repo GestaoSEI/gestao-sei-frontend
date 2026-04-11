@@ -70,7 +70,7 @@ O Vite está configurado com proxy: todas as requisições para `/api` são redi
 
 Usamos o padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/):
 
-```
+```text
 <tipo>: <descrição curta em português>
 ```
 
@@ -86,7 +86,7 @@ Usamos o padrão [Conventional Commits](https://www.conventionalcommits.org/pt-b
 
 **Exemplos:**
 
-```
+```text
 feat: adicionar filtro por unidade na página de processos
 fix: corrigir reset de filtros ao clicar em Limpar
 style: ajustar espaçamento do cabeçalho na versão mobile
