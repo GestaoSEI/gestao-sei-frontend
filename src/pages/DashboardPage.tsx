@@ -75,9 +75,19 @@ export default function DashboardPage() {
           const params: Record<string, string | boolean> = {}
           if (filterStatus) params.status = filterStatus
           if (apenasVencidos) params.prazoExpirado = true
-          if (keyword.trim()) params.keyword = keyword.trim()
           const res = await filterProcessos(params)
-          setProcessos(res.data)
+          let results = res.data
+          if (keyword.trim()) {
+            const kw = keyword.trim().toLowerCase()
+            results = results.filter((p: Processo) =>
+              p.numeroProcesso?.toLowerCase().includes(kw) ||
+              p.tipoProcesso?.toLowerCase().includes(kw) ||
+              p.origem?.toLowerCase().includes(kw) ||
+              p.unidadeAtual?.toLowerCase().includes(kw) ||
+              p.observacao?.toLowerCase().includes(kw)
+            )
+          }
+          setProcessos(results)
         }
       } catch {
         setError('Erro ao buscar processos.')
@@ -129,6 +139,12 @@ export default function DashboardPage() {
     setFilterStatus(e.target.value)
   }
 
+  function handleLimpar() {
+    setKeyword('')
+    setFilterStatus('')
+    setApenasVencidos(false)
+  }
+
   return (
     <>
       <div className="page-header">
@@ -165,7 +181,7 @@ export default function DashboardPage() {
           />
           Apenas Vencidos
         </label>
-        <button className="btn btn-secondary btn-sm" onClick={fetchAll} title="Limpar filtros">
+        <button className="btn btn-secondary btn-sm" onClick={handleLimpar} title="Limpar filtros">
           ↺ Limpar
         </button>
       </div>

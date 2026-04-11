@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import type { FormEvent, ChangeEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../App'
-import { getUsuarios, createUsuario, updateUsuario, deleteUsuario, alterarSenha } from '../api'
+import { getUsuarios, createUsuario, updateUsuario, deleteUsuario, alterarSenha, getRelatorioUsuarios } from '../api'
 import type { Usuario, Role } from '../types'
 
 type FormState = {
@@ -43,6 +43,7 @@ export default function UsuariosPage() {
   const [senhaForm, setSenhaForm] = useState<SenhaForm>(EMPTY_SENHA)
   const [senhaFormError, setSenhaFormError] = useState('')
   const [salvandoSenha, setSalvandoSenha] = useState(false)
+  const [downloadingPdf, setDownloadingPdf] = useState(false)
 
   useEffect(() => {
     getUsuarios()
@@ -126,6 +127,23 @@ export default function UsuariosPage() {
     setSenhaFormError('')
   }
 
+  async function handlePdf() {
+    setDownloadingPdf(true)
+    try {
+      const res = await getRelatorioUsuarios()
+      const url = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'relatorio-usuarios.pdf'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      alert('Erro ao gerar relatório PDF.')
+    } finally {
+      setDownloadingPdf(false)
+    }
+  }
+
   async function handleResetSenha(e: FormEvent) {
     e.preventDefault()
     if (!senhaParaId) return
@@ -157,6 +175,9 @@ export default function UsuariosPage() {
       <div className="page-header">
         <h2 className="page-title">Gestão de Usuários</h2>
         <div className="page-actions">
+          <button className="btn btn-secondary btn-sm" onClick={handlePdf} disabled={downloadingPdf}>
+            {downloadingPdf ? 'Gerando...' : '📄 Gerar PDF'}
+          </button>
           <button className="btn btn-primary btn-sm" onClick={openCreate}>
             + Novo Usuário
           </button>

@@ -44,6 +44,9 @@ export const getHistorico = (processoId: number) =>
 export const getRelatorio = (params?: Record<string, string | undefined>) =>
   apiClient.get('/api/processos/relatorio', { params, responseType: 'blob' })
 
+export const getRelatorioUsuarios = () =>
+  apiClient.get('/api/usuarios/relatorio', { responseType: 'blob' })
+
 // Usuários (/api/usuarios/* no backend → /api/api/usuarios/* pelo proxy do Vite)
 export const getUsuarios = () =>
   apiClient.get<Usuario[]>('/api/usuarios')
