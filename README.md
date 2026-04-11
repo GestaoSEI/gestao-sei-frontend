@@ -10,6 +10,8 @@
 
 O **Gestão SEI Frontend** é uma SPA (Single Page Application) construída com React 19 e TypeScript que consome a API REST do backend. Oferece uma interface completa para gerenciamento de processos administrativos do SEI, com autenticação JWT, controle de perfis e geração de relatórios em PDF.
 
+> 💡 **Este repositório é um template.** A organização [GestaoSEI](https://github.com/GestaoSEI) foi criada para que outros servidores públicos possam utilizar este sistema como ponto de partida, adaptando-o à realidade de sua própria unidade. Sinta-se à vontade para fazer um fork e personalizar.
+
 ## ✨ Funcionalidades
 
 ### 🔐 **Autenticação**

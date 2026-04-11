@@ -1,6 +1,8 @@
 # 🤝 Guia de Contribuição — Gestão SEI Frontend
 
-Obrigada pelo interesse em contribuir! Este guia explica como configurar o ambiente, seguir os padrões do projeto e enviar contribuições.
+Obrigada pelo interesse em contribuir! Este repositório faz parte da organização [GestaoSEI](https://github.com/GestaoSEI), criada como **template para servidores públicos** que desejam adotar um sistema de controle de processos SEI em sua unidade. Contribuições que tornem o projeto mais genérico e reutilizável são especialmente bem-vindas.
+
+Este guia explica como configurar o ambiente, seguir os padrões do projeto e enviar contribuições.
 
 ## 📋 Índice
 
