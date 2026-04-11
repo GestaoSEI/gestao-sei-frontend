@@ -69,7 +69,7 @@ Chamadas a `/api/*` são redirecionadas ao backend pelo proxy do Vite (configura
 ## 📜 Scripts Disponíveis
 
 | Script | Descrição |
-|--------|-----------|
+| ------ | --------- |
 | `npm run dev` | Servidor de desenvolvimento com hot-reload |
 | `npm run build` | Build de produção em `dist/` |
 | `npm run preview` | Serve localmente o build gerado |
@@ -80,6 +80,10 @@ Chamadas a `/api/*` são redirecionadas ao backend pelo proxy do Vite (configura
 - Node.js 20 ou superior
 - npm 10 ou superior
 - Backend disponível em `http://localhost:8081`
+
+## 🤝 Contribuindo
+
+Este é um projeto **Open Source**. Leia o [Guia de Contribuição](CONTRIBUTING.md) para saber como configurar o ambiente, seguir os padrões do projeto e enviar um Pull Request.
 
 ## 📄 Licença
 
