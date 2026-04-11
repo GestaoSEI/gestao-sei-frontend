@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import type { ChangeEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../App'
 import {
   getProcessos,
   searchProcessos,
@@ -10,7 +11,7 @@ import {
 } from '../api'
 import type { Processo } from '../types'
 
-const STATUS_FILTROS = ['Em andamento', 'Respondido', 'Concluído', 'Arquivado', 'Expirado']
+const STATUS_FILTROS = ['Em andamento', 'Respondido', 'Concluído', 'Encerrado', 'Expirado']
 
 function formatDate(iso: string): string {
   if (!iso) return '—'
@@ -21,13 +22,14 @@ function formatDate(iso: string): string {
 function statusClass(status: string): string {
   const s = status?.toLowerCase() ?? ''
   if (s === 'expirado') return 'badge badge-expirado'
-  if (s === 'concluído' || s === 'arquivado') return 'badge badge-ok'
-  if (s === 'respondido') return 'badge badge-warn'
+  if (s === 'concluído' || s === 'encerrado' || s === 'respondido') return 'badge badge-ok'
   return 'badge badge-default'
 }
 
 export default function DashboardPage() {
   const navigate = useNavigate()
+  const { auth } = useAuth()
+  const isAdmin = auth?.role === 'ADMIN'
   const [processos, setProcessos] = useState<Processo[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -235,13 +237,15 @@ export default function DashboardPage() {
                     >
                       Histórico
                     </button>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      disabled={deletingId === p.id}
-                      onClick={() => handleDelete(p.numeroProcesso, p.id)}
-                    >
-                      {deletingId === p.id ? '...' : 'Excluir'}
-                    </button>
+                    {isAdmin && (
+                      <button
+                        className="btn btn-danger btn-sm"
+                        disabled={deletingId === p.id}
+                        onClick={() => handleDelete(p.numeroProcesso, p.id)}
+                      >
+                        {deletingId === p.id ? '...' : 'Excluir'}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

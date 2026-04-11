@@ -5,7 +5,7 @@ import { createProcesso, updateProcesso } from '../api'
 import type { Processo } from '../types'
 
 const NUMERO_PATTERN = /^\d{4}\.\d{4}\/\d{7}-\d{1}$/
-const STATUS_SUGESTOES = ['Em andamento', 'Respondido', 'Concluído', 'Arquivado', 'Expirado']
+const STATUS_SUGESTOES = ['Em andamento', 'Respondido', 'Concluído', 'Encerrado', 'Expirado']
 
 type FormData = {
   numeroProcesso: string
@@ -193,20 +193,17 @@ export default function ProcessoFormPage() {
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="status">Status *</label>
-              <input
+              <select
                 id="status"
                 name="status"
-                list="status-options"
                 value={form.status}
                 onChange={handleChange}
-                placeholder="Selecione ou digite"
                 className={errors.status ? 'input-error' : ''}
-              />
-              <datalist id="status-options">
+              >
                 {STATUS_SUGESTOES.map((s) => (
-                  <option key={s} value={s} />
+                  <option key={s} value={s}>{s}</option>
                 ))}
-              </datalist>
+              </select>
               {errors.status && <span className="field-error">{errors.status}</span>}
             </div>
             <div className="form-group">

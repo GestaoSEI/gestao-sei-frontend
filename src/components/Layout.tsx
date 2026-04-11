@@ -65,8 +65,7 @@ export default function Layout() {
     <div className="app-shell">
       <nav className="sidebar">
         <div className="sidebar-brand">
-          <span className="sidebar-eyebrow">Gestão SEI</span>
-          <span className="sidebar-title">Sistema</span>
+          <span className="sidebar-title">Gestão SEI</span>
         </div>
 
         <ul className="sidebar-nav">
