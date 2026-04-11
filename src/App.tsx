@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import type { Role } from './types'
+import { apiClient } from './api'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
@@ -54,6 +55,19 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('gestaoSeiRole')
     setAuth(null)
   }
+
+  useEffect(() => {
+    const interceptorId = apiClient.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          signOut()
+        }
+        return Promise.reject(error)
+      }
+    )
+    return () => apiClient.interceptors.response.eject(interceptorId)
+  }, [])
 
   return (
     <AuthContext.Provider value={{ auth, signIn, signOut }}>
