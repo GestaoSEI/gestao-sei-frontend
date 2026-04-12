@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Processo, HistoricoItem, Usuario, Role } from './types'
+import type { Processo, HistoricoItem, Usuario, Role, ImportacaoResultado } from './types'
 
 export const apiClient = axios.create({ baseURL: '/api' })
 
@@ -46,6 +46,12 @@ export const getRelatorio = (params?: Record<string, string | undefined>) =>
 
 export const getRelatorioUsuarios = () =>
   apiClient.get('/api/usuarios/relatorio', { responseType: 'blob' })
+
+export const importarProcessos = (file: File) => {
+  const form = new FormData()
+  form.append('file', file)
+  return apiClient.post<ImportacaoResultado>('/api/processos/importar', form)
+}
 
 // Usuários (/api/usuarios/* no backend → /api/api/usuarios/* pelo proxy do Vite)
 export const getUsuarios = () =>

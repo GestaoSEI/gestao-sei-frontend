@@ -10,6 +10,14 @@ export interface Processo {
   dataPrazoFinal: string
   observacao?: string
   alertaUrgencia?: boolean
+  duplicata?: boolean
+}
+
+export interface ImportacaoResultado {
+  importados: number
+  duplicatas: number
+  erros: number
+  mensagensErro: string[]
 }
 
 export interface HistoricoItem {

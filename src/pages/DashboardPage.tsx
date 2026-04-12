@@ -153,6 +153,11 @@ export default function DashboardPage() {
           <button className="btn btn-secondary btn-sm" onClick={handlePdf} disabled={downloadingPdf}>
             {downloadingPdf ? 'Gerando...' : '📄 Gerar PDF'}
           </button>
+          {isAdmin && (
+            <button className="btn btn-secondary btn-sm" onClick={() => navigate('/importar')}>
+              📥 Importar CSV
+            </button>
+          )}
           <button className="btn btn-primary btn-sm" onClick={() => navigate('/processos/novo')}>
             + Novo Processo
           </button>
@@ -220,7 +225,7 @@ export default function DashboardPage() {
             </thead>
             <tbody>
               {processos.map((p) => (
-                <tr key={p.id} className={p.alertaUrgencia ? 'row-urgente' : ''}>
+                <tr key={p.id} className={p.duplicata ? 'row-duplicata' : p.alertaUrgencia ? 'row-urgente' : ''}>
                   <td className="mono">{p.numeroProcesso}</td>
                   <td>{p.tipoProcesso}</td>
                   <td>{p.origem}</td>
@@ -230,7 +235,9 @@ export default function DashboardPage() {
                   </td>
                   <td>{formatDate(p.dataPrazoFinal)}</td>
                   <td>
-                    {p.alertaUrgencia ? (
+                    {p.duplicata ? (
+                      <span className="badge badge-duplicata">Duplicata</span>
+                    ) : p.alertaUrgencia ? (
                       <span className="badge badge-urgente">⚠ Urgente</span>
                     ) : (
                       <span className="badge badge-ok">Normal</span>
@@ -253,11 +260,12 @@ export default function DashboardPage() {
                     >
                       Histórico
                     </button>
-                    {isAdmin && (
+                    {isAdmin && p.duplicata && (
                       <button
                         className="btn btn-danger btn-sm"
                         disabled={deletingId === p.id}
                         onClick={() => handleDelete(p.numeroProcesso, p.id)}
+                        title="Excluir duplicata"
                       >
                         {deletingId === p.id ? '...' : 'Excluir'}
                       </button>

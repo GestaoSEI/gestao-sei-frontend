@@ -87,6 +87,16 @@ export default function Layout() {
               </NavLink>
             </li>
           )}
+          {auth?.role === 'ADMIN' && (
+            <li>
+              <NavLink
+                to="/importar"
+                className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              >
+                📥 Importar CSV
+              </NavLink>
+            </li>
+          )}
         </ul>
 
         <div className="sidebar-footer">

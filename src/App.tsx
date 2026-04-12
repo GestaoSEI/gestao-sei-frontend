@@ -9,6 +9,7 @@ import DashboardPage from './pages/DashboardPage'
 import ProcessoFormPage from './pages/ProcessoFormPage'
 import HistoricoPage from './pages/HistoricoPage'
 import UsuariosPage from './pages/UsuariosPage'
+import ImportacaoPage from './pages/ImportacaoPage'
 
 // ─── Auth Context ─────────────────────────────────────────
 export type AuthInfo = {
@@ -93,6 +94,7 @@ function App() {
               <Route path="/processos/editar/:numero" element={<ProcessoFormPage />} />
               <Route path="/processos/historico/:processoId" element={<HistoricoPage />} />
               <Route path="/usuarios" element={<UsuariosPage />} />
+              <Route path="/importar" element={<ImportacaoPage />} />
             </Route>
           </Route>
 

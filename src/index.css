@@ -575,6 +575,10 @@ textarea:focus {
   background: rgba(230, 95, 53, 0.06);
 }
 
+.data-table tbody tr.row-duplicata {
+  background: rgba(234, 179, 8, 0.08);
+}
+
 .actions-cell {
   display: flex;
   gap: 6px;
@@ -634,6 +638,122 @@ textarea:focus {
 .badge-urgente {
   background: var(--accent);
   color: #fff;
+}
+
+.badge-duplicata {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+/* ───────────────────────────────────────────────────────────
+   Importação CSV
+─────────────────────────────────────────────────────────── */
+.importacao-desc {
+  margin-bottom: 1rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.importacao-modelo {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.8rem;
+  font-family: monospace;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.importacao-file-input {
+  padding: 0.4rem 0;
+}
+
+.importacao-resultado {
+  margin-top: 1.5rem;
+}
+
+.importacao-resultado-title {
+  margin-bottom: 0.75rem;
+}
+
+.importacao-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.importacao-stat {
+  border-radius: 6px;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.importacao-stat-ok {
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+}
+
+.importacao-stat-dup {
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+}
+
+.importacao-stat-err {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+}
+
+.importacao-stat-none {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+
+.importacao-stat-num {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.importacao-stat-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.importacao-stat-ok .importacao-stat-label { color: #065f46; }
+.importacao-stat-dup .importacao-stat-label { color: #92400e; }
+.importacao-stat-err .importacao-stat-label { color: #991b1b; }
+
+.importacao-erros {
+  margin-bottom: 0.75rem;
+}
+
+.importacao-erros-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #991b1b;
+}
+
+.importacao-erros-list {
+  padding-left: 1.25rem;
+  font-size: 0.85rem;
+  color: #7f1d1d;
+}
+
+.importacao-aviso-dup {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #92400e;
+  background: #fef3c7;
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #fcd34d;
+}
+
+.importacao-resultado-actions {
+  margin-top: 1rem;
 }
 
 .badge-admin {
