@@ -219,6 +219,7 @@ export default function DashboardPage() {
                 <th>Unidade Atual</th>
                 <th>Status</th>
                 <th>Prazo Final</th>
+                <th>Observação</th>
                 <th>Urgência</th>
                 <th>Ações</th>
               </tr>
@@ -234,6 +235,7 @@ export default function DashboardPage() {
                     <span className={statusClass(p.status)}>{p.status}</span>
                   </td>
                   <td>{formatDate(p.dataPrazoFinal)}</td>
+                  <td className="obs-cell" title={p.observacao ?? ''}>{p.observacao || '—'}</td>
                   <td>
                     {p.duplicata ? (
                       <span className="badge badge-duplicata">Duplicata</span>

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../App'
+import { useAuth, useTheme } from '../App'
 import { authLogin, authRegister, authResetPassword, getUserByLogin } from '../api'
 import type { Role } from '../types'
 
@@ -18,6 +18,7 @@ type Tab = 'login' | 'register'
 
 export default function LoginPage() {
   const { signIn } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
 
   const [tab, setTab] = useState<Tab>('login')
@@ -118,6 +119,11 @@ export default function LoginPage() {
 
   return (
     <main className="page">
+      <div className="login-theme-btn-wrap">
+        <button type="button" className="btn-theme-login" onClick={toggleTheme} title={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}>
+          {theme === 'dark' ? '☀️ Tema claro' : '🌙 Tema escuro'}
+        </button>
+      </div>
       <header className="hero">
         <div className="login-logo-wrap">
           <img src="/Designer.png" alt="Logo Gestão SEI" className="login-logo" />

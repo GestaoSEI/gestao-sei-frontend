@@ -44,11 +44,12 @@ body {
 }
 
 .hero {
-  background: var(--bg-ink);
-  color: #fdf8ee;
+  background: var(--soft);
+  color: var(--text);
   border-radius: 22px;
   padding: 30px;
-  box-shadow: 0 20px 55px rgba(19, 33, 47, 0.18);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 28px rgba(19, 33, 47, 0.08);
 }
 
 .eyebrow {
@@ -56,7 +57,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-size: 0.8rem;
-  color: #f4cfa7;
+  color: var(--accent);
 }
 
 h1 {
@@ -68,7 +69,7 @@ h1 {
 .subtitle {
   margin: 0;
   max-width: 65ch;
-  color: #d7dfeb;
+  color: #5a6a78;
 }
 
 .card {
@@ -244,8 +245,9 @@ textarea:focus {
 .sidebar {
   width: 220px;
   flex-shrink: 0;
-  background: var(--bg-ink);
-  color: #fdf8ee;
+  background: var(--bg-main);
+  color: var(--text);
+  border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
   padding: 24px 14px 20px;
@@ -264,7 +266,7 @@ textarea:focus {
   font-weight: 700;
   color: var(--accent);
   padding: 0 8px 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--line);
   margin-bottom: 16px;
   letter-spacing: 0.02em;
 }
@@ -289,7 +291,7 @@ textarea:focus {
   display: block;
   padding: 10px 12px;
   border-radius: 10px;
-  color: #c9d3de;
+  color: var(--text);
   text-decoration: none;
   font-weight: 500;
   font-size: 0.93rem;
@@ -297,8 +299,8 @@ textarea:focus {
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text);
 }
 
 .nav-link.active {
@@ -307,7 +309,7 @@ textarea:focus {
 }
 
 .sidebar-footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--line);
   padding-top: 16px;
   margin-top: 16px;
   font-size: 0.85rem;
@@ -318,7 +320,7 @@ textarea:focus {
 
 .sidebar-user {
   font-weight: 700;
-  color: #fdf8ee;
+  color: var(--text);
   word-break: break-all;
 }
 
@@ -334,9 +336,9 @@ textarea:focus {
 .btn-senha,
 .btn-theme {
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--line);
   background: transparent;
-  color: #c9d3de;
+  color: var(--text);
   border-radius: 8px;
   padding: 7px 10px;
   font-family: inherit;
@@ -348,8 +350,8 @@ textarea:focus {
 
 .btn-theme:hover,
 .btn-senha:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text);
 }
 
 .btn-logout:hover,
@@ -968,6 +970,52 @@ textarea:focus {
   }
 }
 
+/* Sidebar escura no tema dark */
+[data-theme="dark"] .sidebar {
+  background: var(--bg-ink);
+  color: #fdf8ee;
+  border-right-color: transparent;
+}
+
+[data-theme="dark"] .sidebar-brand {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .nav-link {
+  color: #c9d3de;
+}
+
+[data-theme="dark"] .nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+[data-theme="dark"] .sidebar-footer {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .sidebar-user {
+  color: #fdf8ee;
+}
+
+[data-theme="dark"] .sidebar-logout,
+[data-theme="dark"] .btn-logout,
+[data-theme="dark"] .btn-senha,
+[data-theme="dark"] .btn-theme {
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #c9d3de;
+}
+
+[data-theme="dark"] .btn-theme:hover,
+[data-theme="dark"] .btn-senha:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+[data-theme="dark"] .obs-cell {
+  color: #8ba0b5;
+}
+
 /* ═══════════════════════════════════════════════════════════
    TEMA ESCURO
    Aplicado quando <html data-theme="dark">
@@ -1013,7 +1061,17 @@ textarea:focus {
 
 /* Hero (login) */
 [data-theme="dark"] .hero {
-  background: #1a2d3e;
+  background: #182434;
+  border-color: #253646;
+  color: #d4cfc7;
+}
+
+[data-theme="dark"] .eyebrow {
+  color: var(--accent);
+}
+
+[data-theme="dark"] .subtitle {
+  color: #8ba0b5;
 }
 
 /* Page titles */
@@ -1153,6 +1211,39 @@ textarea:focus {
   color: #a8bfcf;
 }
 
+/* Botão de tema na tela de login */
+.login-theme-btn-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.btn-theme-login {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 150ms;
+}
+
+.btn-theme-login:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .btn-theme-login {
+  border-color: #304155;
+  color: #c9d3de;
+}
+
+[data-theme="dark"] .btn-theme-login:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
 /* Login logo */
 .login-logo-wrap {
   margin-bottom: 14px;
@@ -1163,5 +1254,16 @@ textarea:focus {
   height: 68px;
   border-radius: 16px;
   object-fit: contain;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--line);
+}
+
+/* Célula de observação — trunca texto longo */
+.obs-cell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #6b7c8b;
+  font-size: 0.85rem;
 }
