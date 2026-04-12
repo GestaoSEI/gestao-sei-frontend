@@ -3,6 +3,7 @@
 [![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=flat-square&logo=vite)](https://vitejs.dev/)
+[![License](https://img.shields.io/badge/Licen%C3%A7a-MIT-yellow?style=flat-square)](LICENSE)
 
 > Interface web do sistema Gestão SEI para controle de prazos e tramitação de processos.
 
@@ -93,7 +94,7 @@ Este é um projeto **Open Source**. Leia o [Guia de Contribuição](CONTRIBUTING
 
 ## 📄 Licença
 
-Este projeto está licenciado sob a **MIT License**.
+Este projeto está licenciado sob a **MIT License** — veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ---
 Made with ❤️ by Gilvaneide Medeiros
