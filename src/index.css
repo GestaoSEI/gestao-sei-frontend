@@ -256,6 +256,9 @@ textarea:focus {
 }
 
 .sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: 'Sora', sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
@@ -264,6 +267,15 @@ textarea:focus {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   margin-bottom: 16px;
   letter-spacing: 0.02em;
+}
+
+.sidebar-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .sidebar-nav {
@@ -319,7 +331,8 @@ textarea:focus {
 
 .sidebar-logout,
 .btn-logout,
-.btn-senha {
+.btn-senha,
+.btn-theme {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: transparent;
@@ -333,6 +346,7 @@ textarea:focus {
   text-align: left;
 }
 
+.btn-theme:hover,
 .btn-senha:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
@@ -952,4 +966,202 @@ textarea:focus {
   .actions-cell {
     flex-wrap: wrap;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TEMA ESCURO
+   Aplicado quando <html data-theme="dark">
+══════════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-main: #0f1923;
+  --soft: #182434;
+  --line: #253646;
+  --text: #d4cfc7;
+  --ok: #52c48e;
+}
+
+[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at 15% 5%, rgba(25, 50, 80, 0.4) 0%, transparent 35%),
+    radial-gradient(circle at 90% 80%, rgba(30, 60, 90, 0.3) 0%, transparent 30%),
+    var(--bg-main);
+}
+
+[data-theme="dark"] .app-shell {
+  background: var(--bg-main);
+}
+
+[data-theme="dark"] .content {
+  background: var(--bg-main);
+}
+
+/* Cards */
+[data-theme="dark"] .card {
+  background: rgba(24, 36, 52, 0.95);
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .form-card {
+  background: rgba(24, 36, 52, 0.95);
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .form-card h3 {
+  color: #d4cfc7;
+}
+
+/* Hero (login) */
+[data-theme="dark"] .hero {
+  background: #1a2d3e;
+}
+
+/* Page titles */
+[data-theme="dark"] .page-title {
+  color: #d4cfc7;
+}
+
+/* Inputs */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: #182434;
+  border-color: #304155;
+  color: var(--text);
+}
+
+[data-theme="dark"] .search-input {
+  background: #182434;
+  border-color: #304155;
+  color: var(--text);
+}
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .form-group textarea {
+  background: #182434;
+  border-color: #304155;
+  color: var(--text);
+}
+
+[data-theme="dark"] .form-group label {
+  color: #a8bfcf;
+}
+
+[data-theme="dark"] .field-hint {
+  color: #6b8a9c;
+}
+
+/* Filters bar */
+[data-theme="dark"] .filters-bar {
+  background: rgba(24, 36, 52, 0.9);
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .filters-bar select {
+  background: #182434;
+  border-color: #304155;
+  color: var(--text);
+}
+
+/* Table */
+[data-theme="dark"] .table-wrapper {
+  background: rgba(18, 28, 42, 0.95);
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .data-table td {
+  border-bottom-color: var(--line);
+}
+
+[data-theme="dark"] .data-table tbody tr:hover {
+  background: rgba(230, 95, 53, 0.08);
+}
+
+[data-theme="dark"] .data-table tbody tr.row-urgente {
+  background: rgba(230, 95, 53, 0.1);
+}
+
+[data-theme="dark"] .data-table tbody tr.row-duplicata {
+  background: rgba(234, 179, 8, 0.08);
+}
+
+[data-theme="dark"] .table-count {
+  color: #8ba0b5;
+  border-top-color: var(--line);
+}
+
+/* Buttons */
+[data-theme="dark"] .btn-secondary {
+  background: #253040;
+  color: var(--text);
+  border-color: #304155;
+}
+
+[data-theme="dark"] .tab {
+  background: #182434;
+  border-color: #304155;
+  color: var(--text);
+}
+
+[data-theme="dark"] .tab.active {
+  background: var(--bg-ink);
+  border-color: var(--bg-ink);
+  color: #fff;
+}
+
+[data-theme="dark"] .ghost {
+  background: rgba(24, 36, 52, 0.85);
+  border-color: #304155;
+  color: var(--text);
+}
+
+/* Modal */
+[data-theme="dark"] .modal-box {
+  background: #182434;
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .modal-title {
+  color: #d4cfc7;
+}
+
+/* Diff */
+[data-theme="dark"] .diff-after {
+  color: #52c48e;
+}
+
+/* Importação */
+[data-theme="dark"] .importacao-desc {
+  color: #8ba0b5;
+}
+
+[data-theme="dark"] .importacao-modelo {
+  background: #182434;
+  border-color: #304155;
+  color: var(--text);
+}
+
+[data-theme="dark"] .importacao-stat-none {
+  background: #1e2e3e;
+  border-color: #304155;
+}
+
+/* Badges secundários */
+[data-theme="dark"] .badge-default {
+  background: #253040;
+  color: #a8bfcf;
+}
+
+/* Login logo */
+.login-logo-wrap {
+  margin-bottom: 14px;
+}
+
+.login-logo {
+  width: 68px;
+  height: 68px;
+  border-radius: 16px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.1);
 }

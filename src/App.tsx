@@ -11,6 +11,44 @@ import HistoricoPage from './pages/HistoricoPage'
 import UsuariosPage from './pages/UsuariosPage'
 import ImportacaoPage from './pages/ImportacaoPage'
 
+// ─── Theme Context ─────────────────────────────────────────
+type Theme = 'light' | 'dark'
+
+type ThemeContextType = {
+  theme: Theme
+  toggleTheme: () => void
+}
+
+export const ThemeContext = createContext<ThemeContextType>({
+  theme: 'light',
+  toggleTheme: () => {},
+})
+
+export function useTheme() {
+  return useContext(ThemeContext)
+}
+
+function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<Theme>(() => {
+    return (localStorage.getItem('gestaoSeiTheme') as Theme) ?? 'light'
+  })
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    localStorage.setItem('gestaoSeiTheme', theme)
+  }, [theme])
+
+  function toggleTheme() {
+    setTheme((t) => (t === 'light' ? 'dark' : 'light'))
+  }
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  )
+}
+
 // ─── Auth Context ─────────────────────────────────────────
 export type AuthInfo = {
   token: string
@@ -80,28 +118,30 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          {/* Público */}
-          <Route path="/login" element={<LoginPage />} />
+      <ThemeProvider>
+        <AuthProvider>
+          <Routes>
+            {/* Público */}
+            <Route path="/login" element={<LoginPage />} />
 
-          {/* Protegido por autenticação */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<Layout />}>
-              <Route index element={<Navigate to="/processos" replace />} />
-              <Route path="/processos" element={<DashboardPage />} />
-              <Route path="/processos/novo" element={<ProcessoFormPage />} />
-              <Route path="/processos/editar/:numero" element={<ProcessoFormPage />} />
-              <Route path="/processos/historico/:processoId" element={<HistoricoPage />} />
-              <Route path="/usuarios" element={<UsuariosPage />} />
-              <Route path="/importar" element={<ImportacaoPage />} />
+            {/* Protegido por autenticação */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<Layout />}>
+                <Route index element={<Navigate to="/processos" replace />} />
+                <Route path="/processos" element={<DashboardPage />} />
+                <Route path="/processos/novo" element={<ProcessoFormPage />} />
+                <Route path="/processos/editar/:numero" element={<ProcessoFormPage />} />
+                <Route path="/processos/historico/:processoId" element={<HistoricoPage />} />
+                <Route path="/usuarios" element={<UsuariosPage />} />
+                <Route path="/importar" element={<ImportacaoPage />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </AuthProvider>
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   )
 }

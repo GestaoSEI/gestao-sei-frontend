@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { useAuth } from '../App'
+import { useAuth, useTheme } from '../App'
 import { alterarSenha } from '../api'
 
 export default function Layout() {
   const { auth, signOut } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
   const [showSenhaModal, setShowSenhaModal] = useState(false)
   const [senhaAtual, setSenhaAtual] = useState('')
@@ -65,6 +66,7 @@ export default function Layout() {
     <div className="app-shell">
       <nav className="sidebar">
         <div className="sidebar-brand">
+          <img src="/Designer.png" alt="Logo Gestão SEI" className="sidebar-logo" />
           <span className="sidebar-title">Gestão SEI</span>
         </div>
 
@@ -102,6 +104,9 @@ export default function Layout() {
         <div className="sidebar-footer">
           <span className="sidebar-user">{auth?.login}</span>
           <span className="sidebar-role-badge">{auth?.role}</span>
+          <button type="button" className="btn-theme" onClick={toggleTheme} title={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}>
+            {theme === 'dark' ? '☀️ Tema claro' : '🌙 Tema escuro'}
+          </button>
           <button type="button" className="btn-senha" onClick={openSenhaModal}>
             🔑 Alterar senha
           </button>
