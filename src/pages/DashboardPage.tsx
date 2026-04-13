@@ -227,12 +227,12 @@ export default function DashboardPage() {
             <tbody>
               {processos.map((p) => (
                 <tr key={p.id} className={p.duplicata ? 'row-duplicata' : p.alertaUrgencia ? 'row-urgente' : ''}>
-                  <td className="mono">{p.numeroProcesso}</td>
+                  <td className="mono" title={p.numeroProcesso}>{p.numeroProcesso}</td>
                   <td>{p.tipoProcesso}</td>
                   <td>{p.origem}</td>
                   <td>{p.unidadeAtual}</td>
-                  <td>
-                    <span className={statusClass(p.status)}>{p.status}</span>
+                  <td className="status-cell">
+                    <span className={statusClass(p.status)} title={p.status}>{p.status}</span>
                   </td>
                   <td>{formatDate(p.dataPrazoFinal)}</td>
                   <td className="obs-cell" title={p.observacao ?? ''}>{p.observacao || '—'}</td>

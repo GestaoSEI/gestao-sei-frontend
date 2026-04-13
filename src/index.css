@@ -549,6 +549,7 @@ textarea:focus {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
+  table-layout: auto;
 }
 
 .data-table th {
@@ -577,6 +578,38 @@ textarea:focus {
   padding: 10px 14px;
   border-bottom: 1px solid #ede6db;
   vertical-align: middle;
+}
+
+/* Colunas técnicas ficam compactas para liberar espaço das demais */
+.data-table th:nth-child(1),
+.data-table th:nth-child(6),
+.data-table td:nth-child(6),
+.data-table th:nth-child(8),
+.data-table td:nth-child(8),
+.data-table th:nth-child(9),
+.data-table td:nth-child(9) {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.data-table th:nth-child(1),
+.data-table td:nth-child(1) {
+  width: 22ch;
+  min-width: 22ch;
+  max-width: 22ch;
+}
+
+.data-table th:nth-child(5),
+.data-table td:nth-child(5) {
+  width: 17ch;
+  min-width: 17ch;
+  max-width: 17ch;
+}
+
+.data-table td:nth-child(1) .mono {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .data-table tbody tr:last-child td {
@@ -613,6 +646,21 @@ textarea:focus {
   font-family: 'Courier New', monospace;
   font-size: 0.88rem;
   white-space: nowrap;
+}
+
+.obs-cell {
+  max-width: 42ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-cell .badge {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
 }
 
 .nowrap {
