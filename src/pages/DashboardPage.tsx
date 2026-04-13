@@ -38,7 +38,7 @@ export default function DashboardPage() {
   const [apenasVencidos, setApenasVencidos] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [downloadingPdf, setDownloadingPdf] = useState(false)
-  const [sortPrazo, setSortPrazo] = useState<'desc' | 'asc' | null>(null)
+  const [sortPrazo, setSortPrazo] = useState<'desc' | 'asc'>('desc')
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const fetchAll = useCallback(async () => {
@@ -224,7 +224,7 @@ export default function DashboardPage() {
                   onClick={() => setSortPrazo((s) => (s === 'desc' ? 'asc' : 'desc'))}
                   title="Ordenar por Prazo Final"
                 >
-                  Prazo Final {sortPrazo === 'desc' ? '▼' : sortPrazo === 'asc' ? '▲' : '⇅'}
+                  Prazo Final {sortPrazo === 'desc' ? '▼' : '▲'}
                 </th>
                 <th>Observação</th>
                 <th>Urgência</th>
@@ -234,7 +234,6 @@ export default function DashboardPage() {
             <tbody>
               {[...processos]
                 .sort((a, b) => {
-                  if (!sortPrazo) return 0
                   const hasA = !!a.dataPrazoFinal
                   const hasB = !!b.dataPrazoFinal
                   if (!hasA && !hasB) return 0
