@@ -38,7 +38,7 @@ export default function DashboardPage() {
   const [apenasVencidos, setApenasVencidos] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [downloadingPdf, setDownloadingPdf] = useState(false)
-  const [sortPrazo, setSortPrazo] = useState<'asc' | 'desc' | null>(null)
+  const [sortPrazo, setSortPrazo] = useState<'desc' | 'asc' | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const fetchAll = useCallback(async () => {
@@ -224,7 +224,7 @@ export default function DashboardPage() {
                   onClick={() => setSortPrazo((s) => (s === 'desc' ? 'asc' : 'desc'))}
                   title="Ordenar por Prazo Final"
                 >
-                  Prazo Final {sortPrazo === 'asc' ? '▲' : sortPrazo === 'desc' ? '▼' : '⇅'}
+                  Prazo Final {sortPrazo === 'desc' ? '▼' : sortPrazo === 'asc' ? '▲' : '⇅'}
                 </th>
                 <th>Observação</th>
                 <th>Urgência</th>
@@ -235,9 +235,14 @@ export default function DashboardPage() {
               {[...processos]
                 .sort((a, b) => {
                   if (!sortPrazo) return 0
-                  const da = a.dataPrazoFinal ? new Date(a.dataPrazoFinal).getTime() : Infinity
-                  const db = b.dataPrazoFinal ? new Date(b.dataPrazoFinal).getTime() : Infinity
-                  return sortPrazo === 'asc' ? da - db : db - da
+                  const hasA = !!a.dataPrazoFinal
+                  const hasB = !!b.dataPrazoFinal
+                  if (!hasA && !hasB) return 0
+                  if (!hasA) return 1   // vazios sempre por último
+                  if (!hasB) return -1
+                  const da = new Date(a.dataPrazoFinal).getTime()
+                  const db = new Date(b.dataPrazoFinal).getTime()
+                  return sortPrazo === 'desc' ? db - da : da - db
                 })
                 .map((p) => (
                 <tr key={p.id} className={p.duplicata ? 'row-duplicata' : p.alertaUrgencia ? 'row-urgente' : ''}>
