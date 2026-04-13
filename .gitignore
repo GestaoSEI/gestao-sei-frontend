@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# CSVs sensíveis da unidade (não versionar)
+*Controle processos SEI*.csv
+*controle processos sei*.csv
