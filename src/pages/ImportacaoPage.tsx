@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
+import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { importarProcessos } from '../api'
 import type { ImportacaoResultado } from '../types'
@@ -33,8 +34,18 @@ export default function ImportacaoPage() {
       setResultado(res.data)
       if (inputRef.current) inputRef.current.value = ''
       setArquivo(null)
-    } catch {
-      setErro('Erro ao enviar o arquivo. Verifique o formato e tente novamente.')
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const apiError = error.response?.data as { mensagensErro?: string[]; message?: string } | undefined
+        const mensagem = apiError?.mensagensErro?.[0] ?? apiError?.message
+        if (mensagem) {
+          setErro(mensagem)
+        } else {
+          setErro('Erro ao enviar o arquivo. Verifique o formato e tente novamente.')
+        }
+      } else {
+        setErro('Erro ao enviar o arquivo. Verifique o formato e tente novamente.')
+      }
     } finally {
       setEnviando(false)
     }
