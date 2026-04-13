@@ -221,7 +221,7 @@ export default function DashboardPage() {
                 <th>Status</th>
                 <th
                   className="th-sortable"
-                  onClick={() => setSortPrazo((s) => (s === 'asc' ? 'desc' : 'asc'))}
+                  onClick={() => setSortPrazo((s) => (s === 'desc' ? 'asc' : 'desc'))}
                   title="Ordenar por Prazo Final"
                 >
                   Prazo Final {sortPrazo === 'asc' ? '▲' : sortPrazo === 'desc' ? '▼' : '⇅'}
