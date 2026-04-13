@@ -38,6 +38,7 @@ export default function DashboardPage() {
   const [apenasVencidos, setApenasVencidos] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [downloadingPdf, setDownloadingPdf] = useState(false)
+  const [sortPrazo, setSortPrazo] = useState<'asc' | 'desc' | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const fetchAll = useCallback(async () => {
@@ -218,14 +219,27 @@ export default function DashboardPage() {
                 <th>Origem</th>
                 <th>Unidade Atual</th>
                 <th>Status</th>
-                <th>Prazo Final</th>
+                <th
+                  className="th-sortable"
+                  onClick={() => setSortPrazo((s) => (s === 'asc' ? 'desc' : 'asc'))}
+                  title="Ordenar por Prazo Final"
+                >
+                  Prazo Final {sortPrazo === 'asc' ? '▲' : sortPrazo === 'desc' ? '▼' : '⇅'}
+                </th>
                 <th>Observação</th>
                 <th>Urgência</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody>
-              {processos.map((p) => (
+              {[...processos]
+                .sort((a, b) => {
+                  if (!sortPrazo) return 0
+                  const da = a.dataPrazoFinal ? new Date(a.dataPrazoFinal).getTime() : Infinity
+                  const db = b.dataPrazoFinal ? new Date(b.dataPrazoFinal).getTime() : Infinity
+                  return sortPrazo === 'asc' ? da - db : db - da
+                })
+                .map((p) => (
                 <tr key={p.id} className={p.duplicata ? 'row-duplicata' : p.alertaUrgencia ? 'row-urgente' : ''}>
                   <td className="mono" title={p.numeroProcesso}>{p.numeroProcesso}</td>
                   <td>{p.tipoProcesso}</td>

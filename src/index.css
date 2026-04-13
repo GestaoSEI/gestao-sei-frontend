@@ -648,6 +648,16 @@ textarea:focus {
   white-space: nowrap;
 }
 
+.th-sortable {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.th-sortable:hover {
+  background-color: color-mix(in srgb, currentColor 8%, transparent);
+}
+
 .obs-cell {
   max-width: 42ch;
   white-space: nowrap;
