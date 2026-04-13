@@ -66,7 +66,7 @@ export default function Layout() {
     <div className="app-shell">
       <nav className="sidebar">
         <div className="sidebar-brand">
-          <img src="/Designer.png" alt="Logo Gestão SEI" className="sidebar-logo" />
+          <img src="/logo.png" alt="Logo Gestão SEI" className="sidebar-logo" />
           <span className="sidebar-title">Gestão SEI</span>
         </div>
 

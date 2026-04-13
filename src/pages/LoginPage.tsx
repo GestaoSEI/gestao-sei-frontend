@@ -126,7 +126,7 @@ export default function LoginPage() {
       </div>
       <header className="hero">
         <div className="login-logo-wrap">
-          <img src="/Designer.png" alt="Logo Gestão SEI" className="login-logo" />
+          <img src="/logo.png" alt="Logo Gestão SEI" className="login-logo" />
         </div>
         <p className="eyebrow">Gestão SEI</p>
         <h1>Acesso ao Sistema</h1>
