@@ -6,7 +6,9 @@ import { getUsuarios, createUsuario, updateUsuario, deleteUsuario, alterarSenha,
 import type { Usuario, Role } from '../types'
 
 type FormState = {
-  login: string
+  nomeCompleto: string
+  email: string
+  dataNascimento: string
   role: Role
 }
 
@@ -15,8 +17,16 @@ type SenhaForm = {
   confirma: string
 }
 
-const EMPTY: FormState = { login: '', role: 'USER' }
+const EMPTY: FormState = { nomeCompleto: '', email: '', dataNascimento: '', role: 'USER' }
 const EMPTY_SENHA: SenhaForm = { novaSenha: '', confirma: '' }
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function formatDate(value: string) {
+  if (!value) return '-'
+  const [year, month, day] = value.split('-')
+  if (!year || !month || !day) return value
+  return `${day}/${month}/${year}`
+}
 
 export default function UsuariosPage() {
   const { auth } = useAuth()
@@ -61,7 +71,12 @@ export default function UsuariosPage() {
 
   function openEdit(u: Usuario) {
     setEditId(u.id)
-    setForm({ login: u.login, role: u.role })
+    setForm({
+      nomeCompleto: u.nomeCompleto ?? '',
+      email: u.email ?? u.login,
+      dataNascimento: u.dataNascimento ?? '',
+      role: u.role,
+    })
     setFormError('')
     setShowForm(true)
   }
@@ -74,28 +89,47 @@ export default function UsuariosPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (!form.login.trim()) {
-      setFormError('Login é obrigatório.')
+    if (!form.nomeCompleto.trim()) {
+      setFormError('Nome completo é obrigatório.')
+      return
+    }
+    if (!EMAIL_PATTERN.test(form.email.trim())) {
+      setFormError('Informe um e-mail válido.')
+      return
+    }
+    if (!form.dataNascimento) {
+      setFormError('Data de nascimento é obrigatória.')
       return
     }
     setSaving(true)
     setFormError('')
     try {
       if (editId !== null) {
-        const res = await updateUsuario(editId, { login: form.login.trim(), role: form.role })
+        const res = await updateUsuario(editId, {
+          nomeCompleto: form.nomeCompleto.trim(),
+          email: form.email.trim(),
+          dataNascimento: form.dataNascimento,
+          role: form.role,
+        })
         setUsuarios((prev) => prev.map((u) => (u.id === editId ? res.data : u)))
       } else {
-        const res = await createUsuario({ login: form.login.trim(), role: form.role })
+        const res = await createUsuario({
+          nomeCompleto: form.nomeCompleto.trim(),
+          email: form.email.trim(),
+          dataNascimento: form.dataNascimento,
+          role: form.role,
+        })
         setUsuarios((prev) => [...prev, res.data])
       }
       setShowForm(false)
       setForm(EMPTY)
-    } catch {
-      setFormError(
+    } catch (err: unknown) {
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      setFormError(message ?? (
         editId !== null
-          ? 'Erro ao atualizar usuário. Login pode já estar em uso.'
-          : 'Erro ao criar usuário. Login pode já existir.'
-      )
+          ? 'Erro ao atualizar usuário. Verifique os dados informados.'
+          : 'Erro ao criar usuário. Verifique os dados informados.'
+      ))
     } finally {
       setSaving(false)
     }
@@ -108,7 +142,7 @@ export default function UsuariosPage() {
   }
 
   async function handleDelete(u: Usuario) {
-    if (!confirm(`Excluir o usuário "${u.login}"? Esta ação não pode ser desfeita.`)) return
+    if (!confirm(`Excluir o usuário "${u.nomeCompleto || u.email || u.login}"? Esta ação não pode ser desfeita.`)) return
     setDeletingId(u.id)
     try {
       await deleteUsuario(u.id)
@@ -122,7 +156,7 @@ export default function UsuariosPage() {
   }
 
   function openSenhaForm(u: Usuario) {
-    setSenhaParaId({ id: u.id, login: u.login })
+    setSenhaParaId({ id: u.id, login: u.email || u.login })
     setSenhaForm(EMPTY_SENHA)
     setSenhaFormError('')
   }
@@ -193,14 +227,38 @@ export default function UsuariosPage() {
           <form className="form form-usuario" onSubmit={handleSubmit}>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="u-login">Login *</label>
+                <label htmlFor="u-nome">Nome completo *</label>
                 <input
-                  id="u-login"
-                  name="login"
-                  value={form.login}
+                  id="u-nome"
+                  name="nomeCompleto"
+                  value={form.nomeCompleto}
                   onChange={handleChange}
-                  placeholder="login do usuário"
+                  placeholder="nome completo do usuário"
                   autoComplete="off"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="u-email">E-mail (login) *</label>
+                <input
+                  id="u-email"
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="usuario@orgao.gov.br"
+                  autoComplete="off"
+                />
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="u-nascimento">Data de nascimento *</label>
+                <input
+                  id="u-nascimento"
+                  name="dataNascimento"
+                  type="date"
+                  value={form.dataNascimento}
+                  onChange={handleChange}
                 />
               </div>
               <div className="form-group">
@@ -250,7 +308,9 @@ export default function UsuariosPage() {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Login</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Nascimento</th>
                 <th>Perfil</th>
                 <th>Ações</th>
               </tr>
@@ -259,7 +319,9 @@ export default function UsuariosPage() {
               {usuarios.map((u) => (
                 <tr key={u.id}>
                   <td>{u.id}</td>
-                  <td>{u.login}</td>
+                  <td>{u.nomeCompleto || '-'}</td>
+                  <td>{u.email || u.login}</td>
+                  <td>{formatDate(u.dataNascimento)}</td>
                   <td>
                     <span className={u.role === 'ADMIN' ? 'badge badge-admin' : 'badge badge-default'}>
                       {u.role}

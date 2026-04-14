@@ -13,9 +13,6 @@ apiClient.interceptors.request.use((config) => {
 export const authLogin = (login: string, senha: string) =>
   apiClient.post<{ token: string }>('/auth/login', { login, senha })
 
-export const authRegister = (login: string, senha: string, role: Role) =>
-  apiClient.post('/auth/register', { login, senha, role })
-
 export const authResetPassword = (login: string, novaSenha: string) =>
   apiClient.post('/auth/reset-password', { login, novaSenha })
 
@@ -60,10 +57,10 @@ export const getUsuarios = () =>
 export const getUserByLogin = (login: string) =>
   apiClient.get<Usuario>(`/api/usuarios/login/${encodeURIComponent(login)}`)
 
-export const createUsuario = (data: { login: string; role: Role }) =>
+export const createUsuario = (data: { nomeCompleto: string; email: string; dataNascimento: string; role: Role }) =>
   apiClient.post<Usuario>('/api/usuarios', data)
 
-export const updateUsuario = (id: number, data: { login: string; role: Role }) =>
+export const updateUsuario = (id: number, data: { nomeCompleto: string; email: string; dataNascimento: string; role: Role }) =>
   apiClient.put<Usuario>(`/api/usuarios/${id}`, data)
 
 export const deleteUsuario = (id: number) =>

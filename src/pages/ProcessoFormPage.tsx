@@ -99,9 +99,13 @@ export default function ProcessoFormPage() {
       }
       navigate('/processos')
     } catch (err: unknown) {
-      const status = (err as { response?: { status: number } })?.response?.status
-      if (status === 409 || status === 400) {
-        setServerError('Número de processo já cadastrado ou dados inválidos.')
+      const response = (err as { response?: { status: number; data?: { message?: string } } })?.response
+      const status = response?.status
+      const message = response?.data?.message
+      if (message === 'Esse processo já foi cadastrado.' || status === 409) {
+        setServerError('Esse processo já foi cadastrado.')
+      } else if (status === 400 && message) {
+        setServerError(message)
       } else {
         setServerError('Erro ao salvar processo. Tente novamente.')
       }

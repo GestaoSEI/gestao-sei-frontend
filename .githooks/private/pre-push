@@ -1,0 +1,14 @@
+#!/bin/sh
+
+remote_name="$1"
+remote_url="$2"
+
+if [ "$remote_name" = "origin" ] || echo "$remote_url" | grep -q "github.com/GestaoSEI/"; then
+  echo ""
+  echo "Push bloqueado para repositório público (origin)." >&2
+  echo "Use o remoto privado: git push private main" >&2
+  echo ""
+  exit 1
+fi
+
+exit 0

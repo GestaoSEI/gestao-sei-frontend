@@ -2,8 +2,7 @@ import { useState, useMemo } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth, useTheme } from '../App'
-import { authLogin, authRegister, authResetPassword, getUserByLogin } from '../api'
-import type { Role } from '../types'
+import { authLogin, authResetPassword, getUserByLogin } from '../api'
 
 function decodeJwtLogin(token: string): string {
   try {
@@ -14,22 +13,16 @@ function decodeJwtLogin(token: string): string {
   }
 }
 
-type Tab = 'login' | 'register'
-
 export default function LoginPage() {
   const { signIn } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
 
-  const [tab, setTab] = useState<Tab>('login')
   const [loginValue, setLoginValue] = useState('')
   const [password, setPassword] = useState('')
   const [showReset, setShowReset] = useState(false)
   const [resetLogin, setResetLogin] = useState('')
   const [resetPassword, setResetPassword] = useState('')
-  const [newLogin, setNewLogin] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [newRole, setNewRole] = useState<Role>('USER')
   const [message, setMessage] = useState('')
   const [isError, setIsError] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -37,10 +30,6 @@ export default function LoginPage() {
   const canLogin = useMemo(
     () => loginValue.trim().length > 0 && password.length > 0,
     [loginValue, password]
-  )
-  const canRegister = useMemo(
-    () => newLogin.trim().length > 0 && newPassword.length >= 4,
-    [newLogin, newPassword]
   )
   const canReset = useMemo(
     () => resetLogin.trim().length > 0 && resetPassword.length >= 4,
@@ -73,26 +62,7 @@ export default function LoginPage() {
       navigate('/processos')
     } catch {
       localStorage.removeItem('gestaoSeiToken')
-      setErr('Falha no login. Verifique login e senha.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function handleRegister(e: FormEvent) {
-    e.preventDefault()
-    if (!canRegister) return
-    setLoading(true)
-    setMessage('')
-    try {
-      await authRegister(newLogin.trim(), newPassword, newRole)
-      setOk('Usuário criado com sucesso. Faça login.')
-      setTab('login')
-      setLoginValue(newLogin.trim())
-      setPassword('')
-      setNewPassword('')
-    } catch {
-      setErr('Não foi possível criar o usuário. Login pode já existir.')
+      setErr('Falha no login. Verifique o e-mail e a senha.')
     } finally {
       setLoading(false)
     }
@@ -111,7 +81,7 @@ export default function LoginPage() {
       setShowReset(false)
       setResetPassword('')
     } catch {
-      setErr('Não foi possível resetar a senha. Verifique o login informado.')
+      setErr('Não foi possível resetar a senha. Verifique o e-mail informado.')
     } finally {
       setLoading(false)
     }
@@ -131,37 +101,19 @@ export default function LoginPage() {
         <p className="eyebrow">Gestão SEI</p>
         <h1>Acesso ao Sistema</h1>
         <p className="subtitle">
-          Faça login para acessar ou crie uma nova conta de usuário.
+          Faça login para acessar o sistema. O cadastro de novos usuários é realizado somente por um administrador.
         </p>
       </header>
 
       <section className="card" aria-live="polite">
-        <div className="tabs">
-          <button
-            type="button"
-            className={tab === 'login' ? 'tab active' : 'tab'}
-            onClick={() => setTab('login')}
-          >
-            Login
-          </button>
-          <button
-            type="button"
-            className={tab === 'register' ? 'tab active' : 'tab'}
-            onClick={() => setTab('register')}
-          >
-            Criar conta
-          </button>
-        </div>
-
-        {tab === 'login' ? (
           <>
             <form className="form" onSubmit={handleLogin}>
-              <label htmlFor="login">Login</label>
+              <label htmlFor="login">E-mail</label>
               <input
                 id="login"
                 value={loginValue}
                 onChange={(e) => setLoginValue(e.target.value)}
-                placeholder="ex.: admin"
+                placeholder="seu e-mail cadastrado"
                 autoComplete="username"
               />
               <label htmlFor="senha">Senha</label>
@@ -189,12 +141,12 @@ export default function LoginPage() {
 
             {showReset && (
               <form className="form reset-form" onSubmit={handleResetPassword}>
-                <label htmlFor="reset-login">Login para reset</label>
+                <label htmlFor="reset-login">E-mail para reset</label>
                 <input
                   id="reset-login"
                   value={resetLogin}
                   onChange={(e) => setResetLogin(e.target.value)}
-                  placeholder="seu login"
+                  placeholder="seu e-mail cadastrado"
                   autoComplete="username"
                 />
                 <label htmlFor="reset-senha">Nova senha</label>
@@ -212,39 +164,6 @@ export default function LoginPage() {
               </form>
             )}
           </>
-        ) : (
-          <form className="form" onSubmit={handleRegister}>
-            <label htmlFor="novo-login">Login</label>
-            <input
-              id="novo-login"
-              value={newLogin}
-              onChange={(e) => setNewLogin(e.target.value)}
-              placeholder="novo login"
-              autoComplete="username"
-            />
-            <label htmlFor="nova-senha">Senha</label>
-            <input
-              id="nova-senha"
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="mínimo 4 caracteres"
-              autoComplete="new-password"
-            />
-            <label htmlFor="perfil">Perfil</label>
-            <select
-              id="perfil"
-              value={newRole}
-              onChange={(e) => setNewRole(e.target.value as Role)}
-            >
-              <option value="USER">USER</option>
-              <option value="ADMIN">ADMIN</option>
-            </select>
-            <button type="submit" className="primary" disabled={!canRegister || loading}>
-              {loading ? 'Criando...' : 'Criar conta'}
-            </button>
-          </form>
-        )}
 
         {message && (
           <p className={isError ? 'message message-error' : 'message'}>{message}</p>

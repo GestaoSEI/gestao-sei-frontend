@@ -26,3 +26,24 @@ dist-ssr
 # CSVs sensíveis da unidade (não versionar)
 *Controle processos SEI*.csv
 *controle processos sei*.csv
+
+# Backups e exportações locais
+backups/
+exports/
+dados_reais/
+dados-sensiveis/
+dados_sensiveis/
+sensiveis/
+sigilosos/
+
+# Dumps e arquivos de dados locais
+*.bak
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.sql
+*.csv
+*.xlsx
+*.xls
+*.parquet

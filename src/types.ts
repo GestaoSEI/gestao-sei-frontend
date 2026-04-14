@@ -34,5 +34,8 @@ export interface HistoricoItem {
 export interface Usuario {
   id: number
   login: string
+  nomeCompleto: string
+  email: string
+  dataNascimento: string
   role: Role
 }

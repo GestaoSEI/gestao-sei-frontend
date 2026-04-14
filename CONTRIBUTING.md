@@ -37,6 +37,34 @@ git clone https://github.com/<seu-usuario>/gestao-sei-frontend.git
 cd gestao-sei-frontend
 ```
 
+### Perfil de hooks Git
+
+Este repositório agora possui **hooks versionados** com dois perfis:
+
+- `public`: para contribuição normal ao template público
+- `private`: para clones privados que trabalham com dados reais e não devem enviar código direto ao repositório público
+
+Instalação no Windows PowerShell:
+
+```powershell
+.\scripts\install-git-hooks.ps1 public
+```
+
+ou, para um clone privado:
+
+```powershell
+.\scripts\install-git-hooks.ps1 private
+```
+
+Instalação no shell:
+
+```bash
+sh scripts/install-git-hooks.sh public
+```
+
+No perfil `private`, o push para `origin` e para URLs da organização pública é bloqueado.  
+No perfil `public`, esse bloqueio não é aplicado.
+
 ### 2. Instale as dependências
 
 ```bash
@@ -122,6 +150,17 @@ chore: atualizar dependências do Vite
    - Descrição do que foi alterado e por quê
    - Screenshot ou GIF se a mudança for visual
    - Referência à Issue relacionada (se houver): `Closes #123`
+
+### Fluxo recomendado para instâncias privadas
+
+Se você mantém uma implantação privada com dados reais, o fluxo mais seguro é:
+
+1. Trabalhar normalmente no clone privado com hooks no perfil `private`
+2. Identificar a parte genérica da mudança
+3. Reaplicar essa mudança em um clone limpo do repositório público, com hooks no perfil `public`
+4. Abrir o PR a partir desse clone público
+
+Isso evita misturar configuração de proteção do ambiente privado com o fluxo de contribuição do template.
 
 ---
 
