@@ -1,100 +1,63 @@
-# 🖥️ Gestão SEI Frontend
+# 🎨 Gestão SEI Frontend
 
-[![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-5-646cff?style=flat-square&logo=vite)](https://vitejs.dev/)
-[![License](https://img.shields.io/badge/Licen%C3%A7a-MIT-yellow?style=flat-square)](LICENSE)
+[![React](https://img.shields.io/badge/React-18-blue?style=flat-square&logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
+[![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
 
-> Interface web do sistema Gestão SEI para controle de prazos e tramitação de processos.
+> 💻 Interface moderna e responsiva para o controle de processos administrativos do SEI.
 
 ## 📋 Sobre o Projeto
 
-O **Gestão SEI Frontend** é uma SPA (Single Page Application) construída com React 19 e TypeScript que consome a API REST do backend. Oferece uma interface completa para gerenciamento de processos administrativos do SEI, com autenticação JWT, controle de perfis e geração de relatórios em PDF.
+O **Gestão SEI Frontend** oferece uma experiência intuitiva para que servidores públicos gerenciem seus processos. Com um dashboard focado em produtividade, o sistema destaca prazos críticos e facilita a tramitação de documentos.
 
-> 💡 **Este repositório é um template.** A organização [GestaoSEI](https://github.com/GestaoSEI) foi criada para que outros servidores públicos possam utilizar este sistema como ponto de partida, adaptando-o à realidade de sua própria unidade. Sinta-se à vontade para fazer um fork e personalizar.
+## 🛠️ Arquitetura Técnica
 
-## ✨ Funcionalidades
+A aplicação foi construída com foco em performance e tipagem forte. Para entender a estrutura de componentes, fluxo de autenticação e integração com a API, acesse:
 
-### 🔐 **Autenticação**
+👉 **[Documentação de Arquitetura (Frontend)](ARQUITETURA.md)**
 
-- Login com JWT (token persistido em `localStorage`).
-- Cadastro de novo usuário e reset de senha via tela de login.
-- Proteção de rotas — usuário não autenticado é redirecionado para `/login`.
-
-### 📋 **Gestão de Processos**
-
-- Listagem completa de processos com indicadores visuais de urgência e status.
-- **Busca em tempo real** por número, tipo, origem, unidade ou observação (debounce 400 ms).
-- **Filtros** por status e prazo vencido.
-- Cadastro e edição de processos com validação de campos (incluindo padrão `9999.9999/9999999-9`).
-- Exclusão com confirmação.
-- Visualização do histórico de tramitação com diff visual (antes → depois).
-- **Download de relatório PDF** com os filtros ativos.
-
-### 👥 **Gestão de Usuários** (ADMIN)
-
-- Listagem, criação e edição de usuários.
-- Exclusão de usuário (bloqueada pelo backend se houver histórico de processos).
-- Redefinição de senha de qualquer usuário (sem necessidade de senha atual).
-
-### 🔑 **Troca de Senha**
-
-- Disponível para todos os perfis via botão no menu lateral.
-- USER deve informar a senha atual; ADMIN pode trocar diretamente.
-
-## 🏗️ Estrutura Principal
-
-```text
-src/
-├── App.tsx              # AuthContext, AuthProvider, useAuth, BrowserRouter + rotas
-├── api.ts               # Cliente Axios com interceptor JWT e todas as funções de API
-├── types.ts             # Interfaces TypeScript (Processo, HistoricoItem, Usuario, Role)
-├── index.css            # Design system: tokens, sidebar, tabelas, badges, modais
-├── components/
-│   ├── Layout.tsx       # Shell da aplicação: sidebar, navegação, modal de senha
-│   └── ProtectedRoute.tsx # Guarda de rota por autenticação
-└── pages/
-    ├── LoginPage.tsx        # Login, criar conta, reset de senha
-    ├── DashboardPage.tsx    # Listagem de processos, busca, filtros, PDF
-    ├── ProcessoFormPage.tsx # Criar / editar processo
-    ├── HistoricoPage.tsx    # Histórico de tramitação
-    └── UsuariosPage.tsx     # Gestão de usuários (ADMIN)
+### Visão Geral da Interface
+```mermaid
+graph LR
+    A[Login] --> B[Dashboard]
+    B --> C[Gestão de Processos]
+    B --> D[Gestão de Usuários]
+    B --> E[Importação de Dados]
 ```
+
+## ✨ Funcionalidades Principais
+
+- 🔐 **Autenticação Segura**: Gestão de sessão via JWT com redirecionamento automático.
+- 📊 **Dashboard Inteligente**: Cards com métricas de processos abertos, concluídos e expirados.
+- 🔍 **Busca em Tempo Real**: Filtros dinâmicos e busca global por palavras-chave.
+- 📅 **Gestão de Prazos**: Alertas visuais coloridos baseados na proximidade do vencimento.
+- 📥 **Importação de CSV**: Interface amigável para carga de dados em massa com feedback de erros.
+- 📄 **Histórico Detalhado**: Visualização em linha do tempo das tramitações de cada processo.
 
 ## 🚀 Como Executar
 
-**Pré-requisito:** Backend rodando em `http://localhost:8081` (ver [gestao-sei-backend](https://github.com/GestaoSEI/gestao-sei-backend)).
+**Pré-requisitos:** Node.js (v18+) e npm/yarn.
 
-```bash
-npm install
-npm run dev
+1. **Instalar dependências:**
+   ```bash
+   npm install
+   ```
+2. **Configurar variáveis de ambiente:**
+   Crie um arquivo `.env` baseado no `.env.example` apontando para a URL do seu backend.
+3. **Rodar em desenvolvimento:**
+   ```bash
+   npm run dev
+   ```
+
+## 🏗️ Estrutura do Projeto
+```text
+src/
+├── 📁 components/  # Botões, Modais, Cards, Layout
+├── 📁 pages/       # Login, Dashboard, Usuários, Histórico
+├── 📁 api.ts       # Cliente Axios com Interceptores
+└── 📁 types.ts     # Interfaces TypeScript
 ```
-
-A aplicação sobe em [http://localhost:5173](http://localhost:5173).  
-Chamadas a `/api/*` são redirecionadas ao backend pelo proxy do Vite (configurado em [vite.config.ts](vite.config.ts)).
-
-## 📜 Scripts Disponíveis
-
-| Script | Descrição |
-| ------ | --------- |
-| `npm run dev` | Servidor de desenvolvimento com hot-reload |
-| `npm run build` | Build de produção em `dist/` |
-| `npm run preview` | Serve localmente o build gerado |
-| `npm run lint` | Análise estática com ESLint |
-
-## ⚙️ Requisitos
-
-- Node.js 20 ou superior
-- npm 10 ou superior
-- Backend disponível em `http://localhost:8081`
-
-## 🤝 Contribuindo
-
-Este é um projeto **Open Source**. Leia o [Guia de Contribuição](CONTRIBUTING.md) para saber como configurar o ambiente, seguir os padrões do projeto e enviar um Pull Request.
-
-## 📄 Licença
-
-Este projeto está licenciado sob a **MIT License** — veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ---
 Made with ❤️ by Gilvaneide Medeiros
