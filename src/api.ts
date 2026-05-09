@@ -41,6 +41,9 @@ export const getHistorico = (processoId: number) =>
 export const getRelatorio = (params?: Record<string, string | undefined>) =>
   apiClient.get('/api/processos/relatorio', { params, responseType: 'blob' })
 
+export const exportarProcessosCsv = () =>
+  apiClient.get('/api/processos/exportar-csv', { responseType: 'blob' }) // Nova função de exportação CSV
+
 export const getRelatorioUsuarios = () =>
   apiClient.get('/api/usuarios/relatorio', { responseType: 'blob' })
 

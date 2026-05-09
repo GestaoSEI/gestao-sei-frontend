@@ -47,3 +47,6 @@ sigilosos/
 *.xlsx
 *.xls
 *.parquet
+
+# Arquivos de modelo públicos permitidos
+!public/modelo_importacao_processos.csv

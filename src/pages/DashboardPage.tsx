@@ -8,6 +8,7 @@ import {
   filterProcessos,
   deleteProcesso,
   getRelatorio,
+  exportarProcessosCsv, // Importar a nova função
 } from '../api'
 import type { Processo } from '../types'
 
@@ -38,6 +39,7 @@ export default function DashboardPage() {
   const [apenasVencidos, setApenasVencidos] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [downloadingPdf, setDownloadingPdf] = useState(false)
+  const [exportingCsv, setExportingCsv] = useState(false) // Novo estado para exportação CSV
   const [sortPrazo, setSortPrazo] = useState<'desc' | 'asc'>('desc')
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -136,6 +138,24 @@ export default function DashboardPage() {
     }
   }
 
+  // Nova função para exportar CSV
+  async function handleExportCsv() {
+    setExportingCsv(true)
+    try {
+      const res = await exportarProcessosCsv()
+      const url = URL.createObjectURL(new Blob([res.data], { type: 'text/csv' }))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'processos.csv'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      alert('Erro ao exportar processos para CSV.')
+    } finally {
+      setExportingCsv(false)
+    }
+  }
+
   function handleFilterStatusChange(e: ChangeEvent<HTMLSelectElement>) {
     setFilterStatus(e.target.value)
   }
@@ -152,7 +172,10 @@ export default function DashboardPage() {
         <h2 className="page-title">Processos</h2>
         <div className="page-actions">
           <button className="btn btn-secondary btn-sm" onClick={handlePdf} disabled={downloadingPdf}>
-            {downloadingPdf ? 'Gerando...' : '📄 Gerar PDF'}
+            {downloadingPdf ? 'Gerando PDF...' : '📄 Gerar PDF'}
+          </button>
+          <button className="btn btn-secondary btn-sm" onClick={handleExportCsv} disabled={exportingCsv}>
+            {exportingCsv ? 'Exportando CSV...' : '📊 Exportar CSV'}
           </button>
           {isAdmin && (
             <button className="btn btn-secondary btn-sm" onClick={() => navigate('/importar')}>
@@ -208,94 +231,6 @@ export default function DashboardPage() {
               </button>
             </>
           )}
-        </div>
-      ) : (
-        <div className="table-wrapper">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Número</th>
-                <th>Tipo</th>
-                <th>Origem</th>
-                <th>Unidade Atual</th>
-                <th>Status</th>
-                <th
-                  className="th-sortable"
-                  onClick={() => setSortPrazo((s) => (s === 'desc' ? 'asc' : 'desc'))}
-                  title="Ordenar por Prazo Final"
-                >
-                  Prazo Final {sortPrazo === 'desc' ? '▼' : '▲'}
-                </th>
-                <th>Observação</th>
-                <th>Urgência</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...processos]
-                .sort((a, b) => {
-                  const hasA = !!a.dataPrazoFinal
-                  const hasB = !!b.dataPrazoFinal
-                  if (!hasA && !hasB) return 0
-                  if (!hasA) return 1   // vazios sempre por último
-                  if (!hasB) return -1
-                  const da = new Date(a.dataPrazoFinal).getTime()
-                  const db = new Date(b.dataPrazoFinal).getTime()
-                  return sortPrazo === 'desc' ? db - da : da - db
-                })
-                .map((p) => (
-                <tr key={p.id} className={p.duplicata ? 'row-duplicata' : p.alertaUrgencia ? 'row-urgente' : ''}>
-                  <td className="mono" title={p.numeroProcesso}>{p.numeroProcesso}</td>
-                  <td>{p.tipoProcesso}</td>
-                  <td>{p.origem}</td>
-                  <td>{p.unidadeAtual}</td>
-                  <td className="status-cell">
-                    <span className={statusClass(p.status)} title={p.status}>{p.status}</span>
-                  </td>
-                  <td>{formatDate(p.dataPrazoFinal)}</td>
-                  <td className="obs-cell" title={p.observacao ?? ''}>{p.observacao || '—'}</td>
-                  <td>
-                    {p.duplicata ? (
-                      <span className="badge badge-duplicata">Duplicata</span>
-                    ) : p.alertaUrgencia ? (
-                      <span className="badge badge-urgente">⚠ Urgente</span>
-                    ) : (
-                      <span className="badge badge-ok">Normal</span>
-                    )}
-                  </td>
-                  <td className="actions-cell">
-                    <button
-                      className="btn btn-primary btn-sm"
-                      onClick={() =>
-                        navigate(`/processos/editar/${encodeURIComponent(p.numeroProcesso)}`, {
-                          state: { processo: p },
-                        })
-                      }
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-secondary btn-sm"
-                      onClick={() => navigate(`/processos/historico/${p.id}`)}
-                    >
-                      Histórico
-                    </button>
-                    {isAdmin && p.duplicata && (
-                      <button
-                        className="btn btn-danger btn-sm"
-                        disabled={deletingId === p.id}
-                        onClick={() => handleDelete(p.numeroProcesso, p.id)}
-                        title="Excluir duplicata"
-                      >
-                        {deletingId === p.id ? '...' : 'Excluir'}
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="table-count">{processos.length} processo(s) encontrado(s)</p>
         </div>
       )}
     </>
