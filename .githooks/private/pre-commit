@@ -8,6 +8,11 @@ blocked_path_regex='(^|/)(dados_reais|dados-sensiveis|dados_sensiveis|sensiveis|
 blocked_ext_regex='\.(csv|xlsx|xls|parquet|db|sqlite|bak)$'
 
 for file in $staged_files; do
+  # Exceção para o modelo de importação CSV
+  if [ "$file" = "public/modelo_importacao_processos.csv" ]; then
+    continue
+  fi
+
   if echo "$file" | grep -Eiq "$blocked_path_regex"; then
     echo "Commit bloqueado: caminho sensível detectado: $file" >&2
     exit 1
