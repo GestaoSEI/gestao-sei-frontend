@@ -3,9 +3,10 @@ import type { FormEvent, ChangeEvent } from 'react'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import { createProcesso, updateProcesso } from '../api'
 import type { Processo } from '../types'
+import { STATUS_PROCESSO, STATUS_PROCESSO_SUGESTOES } from '../constants/processoStatus'
+import { PROCESSO_FORM_MESSAGES } from '../constants/processoMessages'
 
 const NUMERO_PATTERN = /^\d{4}\.\d{4}\/\d{7}-\d{1}$/
-const STATUS_SUGESTOES = ['Em andamento', 'Respondido', 'Concluído', 'Encerrado', 'Expirado']
 
 type FormData = {
   numeroProcesso: string
@@ -34,7 +35,7 @@ const EMPTY_FORM: FormData = {
   tipoProcesso: '',
   origem: '',
   unidadeAtual: '',
-  status: 'Em andamento',
+  status: STATUS_PROCESSO.EM_ANDAMENTO,
   dataPrazoFinal: '',
   observacao: '',
 }
@@ -68,15 +69,15 @@ export default function ProcessoFormPage() {
   function validate(): boolean {
     const newErrors: Partial<Record<keyof FormData, string>> = {}
     if (!form.numeroProcesso.trim()) {
-      newErrors.numeroProcesso = 'Campo obrigatório.'
+      newErrors.numeroProcesso = PROCESSO_FORM_MESSAGES.REQUIRED
     } else if (!NUMERO_PATTERN.test(form.numeroProcesso.trim())) {
-      newErrors.numeroProcesso = 'Formato inválido. Use: 9999.9999/9999999-9'
+      newErrors.numeroProcesso = PROCESSO_FORM_MESSAGES.NUMERO_INVALIDO
     }
-    if (!form.tipoProcesso.trim()) newErrors.tipoProcesso = 'Campo obrigatório.'
-    if (!form.origem.trim()) newErrors.origem = 'Campo obrigatório.'
-    if (!form.unidadeAtual.trim()) newErrors.unidadeAtual = 'Campo obrigatório.'
-    if (!form.status.trim()) newErrors.status = 'Campo obrigatório.'
-    if (!form.dataPrazoFinal) newErrors.dataPrazoFinal = 'Campo obrigatório.'
+    if (!form.tipoProcesso.trim()) newErrors.tipoProcesso = PROCESSO_FORM_MESSAGES.REQUIRED
+    if (!form.origem.trim()) newErrors.origem = PROCESSO_FORM_MESSAGES.REQUIRED
+    if (!form.unidadeAtual.trim()) newErrors.unidadeAtual = PROCESSO_FORM_MESSAGES.REQUIRED
+    if (!form.status.trim()) newErrors.status = PROCESSO_FORM_MESSAGES.REQUIRED
+    if (!form.dataPrazoFinal) newErrors.dataPrazoFinal = PROCESSO_FORM_MESSAGES.REQUIRED
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -102,12 +103,12 @@ export default function ProcessoFormPage() {
       const response = (err as { response?: { status: number; data?: { message?: string } } })?.response
       const status = response?.status
       const message = response?.data?.message
-      if (message === 'Esse processo já foi cadastrado.' || status === 409) {
-        setServerError('Esse processo já foi cadastrado.')
+      if (message === PROCESSO_FORM_MESSAGES.PROCESSO_DUPLICADO || status === 409) {
+        setServerError(PROCESSO_FORM_MESSAGES.PROCESSO_DUPLICADO)
       } else if (status === 400 && message) {
         setServerError(message)
       } else {
-        setServerError('Erro ao salvar processo. Tente novamente.')
+        setServerError(PROCESSO_FORM_MESSAGES.SALVAR_ERRO)
       }
     } finally {
       setLoading(false)
@@ -204,7 +205,7 @@ export default function ProcessoFormPage() {
                 onChange={handleChange}
                 className={errors.status ? 'input-error' : ''}
               >
-                {STATUS_SUGESTOES.map((s) => (
+                {STATUS_PROCESSO_SUGESTOES.map((s) => (
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>

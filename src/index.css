@@ -461,6 +461,12 @@ textarea:focus {
   color: #fff;
 }
 
+.btn-dark {
+  background: #111111;
+  color: #ffffff;
+  border: 1px solid #000000;
+}
+
 .btn-secondary {
   background: #e8e0d5;
   color: var(--text);
@@ -1204,6 +1210,12 @@ textarea:focus {
 }
 
 /* Buttons */
+[data-theme="dark"] .btn-dark {
+  background: #000000;
+  color: #ffffff;
+  border-color: #1f2937;
+}
+
 [data-theme="dark"] .btn-secondary {
   background: #253040;
   color: var(--text);

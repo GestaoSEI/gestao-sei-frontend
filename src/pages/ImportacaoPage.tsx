@@ -3,7 +3,9 @@ import type { ChangeEvent, FormEvent } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { importarProcessos } from '../api'
+import { IMPORTACAO_MESSAGES } from '../constants/processoMessages'
 import type { ImportacaoResultado } from '../types'
+import { STATUS_PROCESSO } from '../constants/processoStatus'
 
 export default function ImportacaoPage() {
   const navigate = useNavigate()
@@ -23,7 +25,7 @@ export default function ImportacaoPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!arquivo) {
-      setErro('Selecione um arquivo CSV antes de importar.')
+      setErro(IMPORTACAO_MESSAGES.SELECIONE_ARQUIVO)
       return
     }
     setEnviando(true)
@@ -41,10 +43,10 @@ export default function ImportacaoPage() {
         if (mensagem) {
           setErro(mensagem)
         } else {
-          setErro('Erro ao enviar o arquivo. Verifique o formato e tente novamente.')
+          setErro(IMPORTACAO_MESSAGES.ENVIO_ERRO)
         }
       } else {
-        setErro('Erro ao enviar o arquivo. Verifique o formato e tente novamente.')
+        setErro(IMPORTACAO_MESSAGES.ENVIO_ERRO)
       }
     } finally {
       setEnviando(false)
@@ -72,7 +74,7 @@ export default function ImportacaoPage() {
         <div className="importacao-modelo">
           NumeroProcesso,TipoProcesso,Origem,UnidadeAtual,Status,DataPrazoFinal,Observacao
           <br />
-          6024.2023/0001234-5,Ofício,Protocolo Geral,CREAS NPJ,Em andamento,2026-12-31,Opcional
+          6024.2023/0001234-5,Ofício,Protocolo Geral,CREAS NPJ,{STATUS_PROCESSO.EM_ANDAMENTO},2026-12-31,Opcional
         </div>
 
         <form className="form" onSubmit={handleSubmit}>

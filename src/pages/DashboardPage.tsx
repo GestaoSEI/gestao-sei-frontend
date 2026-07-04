@@ -251,7 +251,6 @@ export default function DashboardPage() {
                     Prazo Final {sortPrazo === 'desc' ? '▼' : '▲'}
                   </th>
                   <th>Observação</th>
-                  <th>Urgência</th>
                   <th>Ações</th>
                 </tr>
               </thead>
@@ -268,8 +267,11 @@ export default function DashboardPage() {
                     return sortPrazo === 'desc' ? db - da : da - db
                   })
                   .map((p) => (
-                  <tr key={p.id} className={p.duplicata ? 'row-duplicata' : p.alertaUrgencia ? 'row-urgente' : ''}>
-                    <td className="mono" title={p.numeroProcesso}>{p.numeroProcesso}</td>
+                  <tr key={p.id} className={p.duplicata ? 'row-duplicata' : ''}>
+                    <td className="mono" title={p.numeroProcesso}>
+                      {p.numeroProcesso}
+                      {p.duplicata && <span className="badge badge-duplicata" style={{ marginLeft: '8px' }}>Duplicata</span>}
+                    </td>
                     <td>{p.tipoProcesso}</td>
                     <td>{p.origem}</td>
                     <td>{p.unidadeAtual}</td>
@@ -278,15 +280,6 @@ export default function DashboardPage() {
                     </td>
                     <td>{formatDate(p.dataPrazoFinal)}</td>
                     <td className="obs-cell" title={p.observacao ?? ''}>{p.observacao || '—'}</td>
-                    <td>
-                      {p.duplicata ? (
-                        <span className="badge badge-duplicata">Duplicata</span>
-                      ) : p.alertaUrgencia ? (
-                        <span className="badge badge-urgente">⚠ Urgente</span>
-                      ) : (
-                        <span className="badge badge-ok">Normal</span>
-                      )}
-                    </td>
                     <td className="actions-cell">
                       <button
                         className="btn btn-primary btn-sm"
