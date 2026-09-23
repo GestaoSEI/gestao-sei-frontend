@@ -13,6 +13,7 @@ import {
 import type { Processo } from '../types'
 
 const STATUS_FILTROS = ['Em andamento', 'Respondido', 'Concluído', 'Encerrado', 'Expirado']
+const STATUS_GRAFICO = ['Em andamento', 'Prazo próximo', 'Respondido', 'Concluído', 'Encerrado', 'Expirado']
 
 function formatDate(iso: string): string {
   if (!iso) return '—'
@@ -165,6 +166,26 @@ export default function DashboardPage() {
     setApenasVencidos(false)
   }
 
+  const statusCounts = STATUS_GRAFICO.map((status) => ({
+    status,
+    total: processos.filter((processo) => processo.status?.toLowerCase() === status.toLowerCase()).length,
+  }))
+  const unidadeCounts = Object.entries(
+    processos.reduce<Record<string, number>>((counts, processo) => {
+      const unidade = processo.unidadeAtual || 'Sem unidade'
+      counts[unidade] = (counts[unidade] ?? 0) + 1
+      return counts
+    }, {}),
+  )
+    .sort(([, totalA], [, totalB]) => totalB - totalA)
+    .slice(0, 6)
+  const totalProcessos = processos.length
+  const totalExpirados = statusCounts.find(({ status }) => status === 'Expirado')?.total ?? 0
+  const totalConcluidos = (statusCounts.find(({ status }) => status === 'Concluído')?.total ?? 0)
+    + (statusCounts.find(({ status }) => status === 'Encerrado')?.total ?? 0)
+  const totalPrazoProximo = statusCounts.find(({ status }) => status === 'Prazo próximo')?.total ?? 0
+  const maiorUnidadeTotal = unidadeCounts[0]?.[1] ?? 1
+
   return (
     <>
       <div className="page-header">
@@ -219,8 +240,72 @@ export default function DashboardPage() {
       {loading ? (
         <p className="loading">Carregando...</p>
       ) : (
-        // Corrigido o aninhamento dos ternários
-        processos.length === 0 ? (
+        <>
+          <section className="dashboard-summary" aria-label="Resumo dos processos">
+            <div className="summary-card">
+              <span className="summary-label">Processos no recorte</span>
+              <strong>{totalProcessos}</strong>
+              <span className="summary-detail">resultado(s) atual(is)</span>
+            </div>
+            <div className="summary-card summary-card-warning">
+              <span className="summary-label">Prazo próximo</span>
+              <strong>{totalPrazoProximo}</strong>
+              <span className="summary-detail">atenção nos próximos dias</span>
+            </div>
+            <div className="summary-card summary-card-danger">
+              <span className="summary-label">Expirados</span>
+              <strong>{totalExpirados}</strong>
+              <span className="summary-detail">processo(s) vencido(s)</span>
+            </div>
+            <div className="summary-card summary-card-success">
+              <span className="summary-label">Concluídos ou encerrados</span>
+              <strong>{totalConcluidos}</strong>
+              <span className="summary-detail">processo(s) finalizado(s)</span>
+            </div>
+          </section>
+
+          {processos.length > 0 && (
+            <section className="dashboard-charts" aria-label="Estatísticas dos processos">
+              <div className="chart-panel">
+                <div className="chart-heading">
+                  <div>
+                    <span className="eyebrow">Distribuição</span>
+                    <h3>Processos por status</h3>
+                  </div>
+                  <span className="chart-total">{totalProcessos} total</span>
+                </div>
+                <div className="bar-chart">
+                  {statusCounts.map(({ status, total }) => (
+                    <div className="bar-row" key={status}>
+                      <span className="bar-label">{status}</span>
+                      <div className="bar-track"><span className={`bar-fill bar-${status.toLowerCase().replaceAll(' ', '-').replace('ê', 'e')}`} style={{ width: `${totalProcessos ? (total / totalProcessos) * 100 : 0}%` }} /></div>
+                      <strong className="bar-value">{total}</strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="chart-panel">
+                <div className="chart-heading">
+                  <div>
+                    <span className="eyebrow">Distribuição</span>
+                    <h3>Processos por unidade</h3>
+                  </div>
+                  <span className="chart-total">top {unidadeCounts.length}</span>
+                </div>
+                <div className="bar-chart">
+                  {unidadeCounts.map(([unidade, total]) => (
+                    <div className="bar-row" key={unidade}>
+                      <span className="bar-label" title={unidade}>{unidade}</span>
+                      <div className="bar-track"><span className="bar-fill bar-fill-unit" style={{ width: `${(total / maiorUnidadeTotal) * 100}%` }} /></div>
+                      <strong className="bar-value">{total}</strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {processos.length === 0 ? (
           <div className="empty-state">
             {keyword.trim() || filterStatus || apenasVencidos ? (
               <p>Nenhum processo encontrado para os filtros aplicados.</p>
@@ -233,7 +318,7 @@ export default function DashboardPage() {
               </>
             )}
           </div>
-        ) : (
+          ) : (
           <div className="table-wrapper">
             <table className="data-table">
               <thead>
@@ -314,7 +399,8 @@ export default function DashboardPage() {
             </table>
             <p className="table-count">{processos.length} processo(s) encontrado(s)</p>
           </div>
-        )
+          )}
+        </>
       )}
     </>
   )

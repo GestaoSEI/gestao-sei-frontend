@@ -540,6 +540,140 @@ textarea:focus {
 }
 
 /* ───────────────────────────────────────────────────────────
+   Dashboard
+─────────────────────────────────────────────────────────── */
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.summary-card,
+.chart-panel {
+  background: rgba(255, 247, 239, 0.9);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 108px;
+  padding: 16px;
+  border-top: 3px solid var(--accent);
+}
+
+.summary-card strong {
+  color: var(--bg-ink);
+  font-family: 'Sora', sans-serif;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.summary-label,
+.summary-detail,
+.chart-total {
+  color: #6b7782;
+  font-size: 0.78rem;
+}
+
+.summary-label {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.summary-card-warning { border-top-color: #d98c25; }
+.summary-card-danger { border-top-color: #c0392b; }
+.summary-card-success { border-top-color: #2e9365; }
+.summary-card-warning strong { color: #a26312; }
+.summary-card-danger strong { color: #a93226; }
+.summary-card-success strong { color: #24744f; }
+
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.chart-panel {
+  min-width: 0;
+  padding: 18px;
+}
+
+.chart-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.chart-heading .eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.7rem;
+}
+
+.chart-heading h3 {
+  margin: 0;
+  font-family: 'Sora', sans-serif;
+  font-size: 1rem;
+}
+
+.bar-chart {
+  display: grid;
+  gap: 12px;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: minmax(105px, 0.7fr) minmax(80px, 1.4fr) 28px;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-label {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-track {
+  height: 9px;
+  overflow: hidden;
+  background: #eadfd4;
+  border-radius: 99px;
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  background: var(--accent);
+  border-radius: inherit;
+  transition: width 300ms ease;
+}
+
+.bar-prazo-proximo { background: #d98c25; }
+.bar-respondido,
+.bar-concluido,
+.bar-encerrado { background: #2e9365; }
+.bar-expirado { background: #c0392b; }
+.bar-fill-unit { background: #387a9b; }
+
+.bar-value {
+  color: var(--bg-ink);
+  font-size: 0.82rem;
+  text-align: right;
+}
+
+/* ───────────────────────────────────────────────────────────
    Table
 ─────────────────────────────────────────────────────────── */
 .table-wrapper {
@@ -966,6 +1100,14 @@ textarea:focus {
    Responsive
 ─────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
+  .dashboard-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-charts {
+    grid-template-columns: 1fr;
+  }
+
   .sidebar {
     width: 180px;
     padding: 20px 10px 16px;
@@ -981,6 +1123,25 @@ textarea:focus {
 }
 
 @media (max-width: 640px) {
+  .dashboard-summary {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .summary-card {
+    min-height: 96px;
+    padding: 12px;
+  }
+
+  .summary-card strong {
+    font-size: 1.45rem;
+  }
+
+  .bar-row {
+    grid-template-columns: minmax(90px, 0.8fr) minmax(60px, 1.2fr) 24px;
+    gap: 7px;
+  }
+
   .app-shell {
     flex-direction: column;
   }
@@ -1180,6 +1341,32 @@ textarea:focus {
   background: #182434;
   border-color: #304155;
   color: var(--text);
+}
+
+[data-theme="dark"] .summary-card,
+[data-theme="dark"] .chart-panel {
+  background: rgba(24, 36, 52, 0.95);
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .summary-card strong,
+[data-theme="dark"] .bar-value {
+  color: #d4cfc7;
+}
+
+[data-theme="dark"] .summary-label,
+[data-theme="dark"] .summary-detail,
+[data-theme="dark"] .chart-total {
+  color: #8ba0b5;
+}
+
+[data-theme="dark"] .chart-heading h3,
+[data-theme="dark"] .bar-label {
+  color: #d4cfc7;
+}
+
+[data-theme="dark"] .bar-track {
+  background: #253646;
 }
 
 /* Table */
