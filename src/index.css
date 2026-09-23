@@ -636,6 +636,25 @@ textarea:focus {
   gap: 10px;
 }
 
+.chart-bar-button {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+}
+
+.chart-bar-button:hover .bar-label {
+  color: var(--accent);
+}
+
+.chart-bar-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
 .bar-label {
   overflow: hidden;
   color: var(--text);

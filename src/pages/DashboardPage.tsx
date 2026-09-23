@@ -12,7 +12,7 @@ import {
 } from '../api'
 import type { Processo } from '../types'
 
-const STATUS_FILTROS = ['Em andamento', 'Respondido', 'Concluído', 'Encerrado', 'Expirado']
+const STATUS_FILTROS = ['Em andamento', 'Prazo próximo', 'Respondido', 'Concluído', 'Encerrado', 'Expirado']
 const STATUS_GRAFICO = ['Em andamento', 'Prazo próximo', 'Respondido', 'Concluído', 'Encerrado', 'Expirado']
 
 function formatDate(iso: string): string {
@@ -37,6 +37,7 @@ export default function DashboardPage() {
   const [error, setError] = useState('')
   const [keyword, setKeyword] = useState('')
   const [filterStatus, setFilterStatus] = useState('')
+  const [filterUnidade, setFilterUnidade] = useState('')
   const [apenasVencidos, setApenasVencidos] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [downloadingPdf, setDownloadingPdf] = useState(false)
@@ -64,7 +65,7 @@ export default function DashboardPage() {
   /* Busca debounced */
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
-    if (!keyword.trim() && !filterStatus && !apenasVencidos) {
+    if (!keyword.trim() && !filterStatus && !filterUnidade && !apenasVencidos) {
       fetchAll()
       return
     }
@@ -72,12 +73,13 @@ export default function DashboardPage() {
       setLoading(true)
       setError('')
       try {
-        if (keyword.trim() && !filterStatus && !apenasVencidos) {
+        if (keyword.trim() && !filterStatus && !filterUnidade && !apenasVencidos) {
           const res = await searchProcessos(keyword.trim())
           setProcessos(res.data)
         } else {
           const params: Record<string, string | boolean> = {}
           if (filterStatus) params.status = filterStatus
+          if (filterUnidade) params.unidade = filterUnidade
           if (apenasVencidos) params.prazoExpirado = true
           const res = await filterProcessos(params)
           let results = res.data
@@ -103,7 +105,7 @@ export default function DashboardPage() {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keyword, filterStatus, apenasVencidos])
+  }, [keyword, filterStatus, filterUnidade, apenasVencidos])
 
   async function handleDelete(numero: string, id: number) {
     if (!confirm(`Excluir processo ${numero}? Esta ação não pode ser desfeita.`)) return
@@ -123,6 +125,7 @@ export default function DashboardPage() {
     try {
       const params: Record<string, string> = {}
       if (filterStatus) params.status = filterStatus
+      if (filterUnidade) params.unidade = filterUnidade
       if (apenasVencidos) params.prazoExpirado = 'true'
       if (keyword.trim()) params.keyword = keyword.trim()
       const res = await getRelatorio(params)
@@ -160,9 +163,14 @@ export default function DashboardPage() {
     setFilterStatus(e.target.value)
   }
 
+  function handleFilterUnidadeChange(e: ChangeEvent<HTMLSelectElement>) {
+    setFilterUnidade(e.target.value)
+  }
+
   function handleLimpar() {
     setKeyword('')
     setFilterStatus('')
+    setFilterUnidade('')
     setApenasVencidos(false)
   }
 
@@ -185,6 +193,7 @@ export default function DashboardPage() {
     + (statusCounts.find(({ status }) => status === 'Encerrado')?.total ?? 0)
   const totalPrazoProximo = statusCounts.find(({ status }) => status === 'Prazo próximo')?.total ?? 0
   const maiorUnidadeTotal = unidadeCounts[0]?.[1] ?? 1
+  const unidadesDisponiveis = Array.from(new Set(processos.map((processo) => processo.unidadeAtual).filter(Boolean))).sort()
 
   return (
     <>
@@ -220,6 +229,12 @@ export default function DashboardPage() {
           <option value="">Todos os status</option>
           {STATUS_FILTROS.map((s) => (
             <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+        <select value={filterUnidade} onChange={handleFilterUnidadeChange} aria-label="Filtrar por unidade">
+          <option value="">Todas as unidades</option>
+          {unidadesDisponiveis.map((unidade) => (
+            <option key={unidade} value={unidade}>{unidade}</option>
           ))}
         </select>
         <label className="checkbox-label">
@@ -276,11 +291,11 @@ export default function DashboardPage() {
                 </div>
                 <div className="bar-chart">
                   {statusCounts.map(({ status, total }) => (
-                    <div className="bar-row" key={status}>
+                    <button className="bar-row chart-bar-button" key={status} onClick={() => { setFilterStatus(status); setFilterUnidade('') }} title={`Filtrar por status: ${status}`}>
                       <span className="bar-label">{status}</span>
                       <div className="bar-track"><span className={`bar-fill bar-${status.toLowerCase().replaceAll(' ', '-').replace('ê', 'e')}`} style={{ width: `${totalProcessos ? (total / totalProcessos) * 100 : 0}%` }} /></div>
                       <strong className="bar-value">{total}</strong>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -294,11 +309,11 @@ export default function DashboardPage() {
                 </div>
                 <div className="bar-chart">
                   {unidadeCounts.map(([unidade, total]) => (
-                    <div className="bar-row" key={unidade}>
+                    <button className="bar-row chart-bar-button" key={unidade} onClick={() => { setFilterUnidade(unidade); setFilterStatus('') }} title={`Filtrar por unidade: ${unidade}`}>
                       <span className="bar-label" title={unidade}>{unidade}</span>
                       <div className="bar-track"><span className="bar-fill bar-fill-unit" style={{ width: `${(total / maiorUnidadeTotal) * 100}%` }} /></div>
                       <strong className="bar-value">{total}</strong>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -307,7 +322,7 @@ export default function DashboardPage() {
 
           {processos.length === 0 ? (
           <div className="empty-state">
-            {keyword.trim() || filterStatus || apenasVencidos ? (
+            {keyword.trim() || filterStatus || filterUnidade || apenasVencidos ? (
               <p>Nenhum processo encontrado para os filtros aplicados.</p>
             ) : (
               <>
