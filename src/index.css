@@ -572,6 +572,12 @@ textarea:focus {
   line-height: 1;
 }
 
+.summary-percent {
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
 .summary-label,
 .summary-detail,
 .chart-total {
@@ -1377,6 +1383,10 @@ textarea:focus {
 [data-theme="dark"] .summary-detail,
 [data-theme="dark"] .chart-total {
   color: #8ba0b5;
+}
+
+[data-theme="dark"] .summary-percent {
+  color: #f0a36e;
 }
 
 [data-theme="dark"] .chart-heading h3,

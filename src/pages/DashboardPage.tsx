@@ -28,6 +28,10 @@ function statusClass(status: string): string {
   return 'badge badge-default'
 }
 
+function percentual(parte: number, total: number): string {
+  return total === 0 ? '0%' : `${Math.round((parte / total) * 100)}%`
+}
+
 export default function DashboardPage() {
   const navigate = useNavigate()
   const { auth } = useAuth()
@@ -194,6 +198,9 @@ export default function DashboardPage() {
   const totalPrazoProximo = statusCounts.find(({ status }) => status === 'Prazo próximo')?.total ?? 0
   const maiorUnidadeTotal = unidadeCounts[0]?.[1] ?? 1
   const unidadesDisponiveis = Array.from(new Set(processos.map((processo) => processo.unidadeAtual).filter(Boolean))).sort()
+  const percentualPrazoProximo = percentual(totalPrazoProximo, totalProcessos)
+  const percentualExpirados = percentual(totalExpirados, totalProcessos)
+  const percentualConcluidos = percentual(totalConcluidos, totalProcessos)
 
   return (
     <>
@@ -260,21 +267,25 @@ export default function DashboardPage() {
             <div className="summary-card">
               <span className="summary-label">Processos no recorte</span>
               <strong>{totalProcessos}</strong>
+              <span className="summary-percent">100%</span>
               <span className="summary-detail">resultado(s) atual(is)</span>
             </div>
             <div className="summary-card summary-card-warning">
               <span className="summary-label">Prazo próximo</span>
               <strong>{totalPrazoProximo}</strong>
+              <span className="summary-percent">{percentualPrazoProximo}</span>
               <span className="summary-detail">atenção nos próximos dias</span>
             </div>
             <div className="summary-card summary-card-danger">
               <span className="summary-label">Expirados</span>
               <strong>{totalExpirados}</strong>
+              <span className="summary-percent">{percentualExpirados}</span>
               <span className="summary-detail">processo(s) vencido(s)</span>
             </div>
             <div className="summary-card summary-card-success">
               <span className="summary-label">Concluídos ou encerrados</span>
               <strong>{totalConcluidos}</strong>
+              <span className="summary-percent">{percentualConcluidos}</span>
               <span className="summary-detail">processo(s) finalizado(s)</span>
             </div>
           </section>
