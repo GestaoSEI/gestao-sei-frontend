@@ -610,6 +610,10 @@ textarea:focus {
   padding: 18px;
 }
 
+.chart-panel-wide {
+  grid-column: 1 / -1;
+}
+
 .chart-heading {
   display: flex;
   align-items: flex-start;
@@ -691,6 +695,7 @@ textarea:focus {
 .bar-encerrado { background: #2e9365; }
 .bar-expirado { background: #c0392b; }
 .bar-fill-unit { background: #387a9b; }
+.bar-no-deadline { background: #8a7d70; }
 
 .bar-value {
   color: var(--bg-ink);
@@ -1131,6 +1136,10 @@ textarea:focus {
 
   .dashboard-charts {
     grid-template-columns: 1fr;
+  }
+
+  .chart-panel-wide {
+    grid-column: auto;
   }
 
   .sidebar {

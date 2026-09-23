@@ -201,6 +201,27 @@ export default function DashboardPage() {
   const percentualPrazoProximo = percentual(totalPrazoProximo, totalProcessos)
   const percentualExpirados = percentual(totalExpirados, totalProcessos)
   const percentualConcluidos = percentual(totalConcluidos, totalProcessos)
+  const hoje = new Date()
+  hoje.setHours(0, 0, 0, 0)
+  const prazoCounts = Object.entries(
+    processos.reduce<Record<string, number>>((counts, processo) => {
+      if (!processo.dataPrazoFinal) {
+        counts['Sem prazo definido'] = (counts['Sem prazo definido'] ?? 0) + 1
+        return counts
+      }
+      const dataPrazo = new Date(`${processo.dataPrazoFinal}T00:00:00`)
+      const diasAtePrazo = Math.ceil((dataPrazo.getTime() - hoje.getTime()) / 86400000)
+      const faixa = diasAtePrazo < 0
+        ? 'Vencidos'
+        : diasAtePrazo <= 5
+          ? 'Vencendo em até 5 dias'
+          : 'Prazo acima de 5 dias'
+      counts[faixa] = (counts[faixa] ?? 0) + 1
+      return counts
+    }, {}),
+  )
+  const prazoLabels = ['Vencidos', 'Vencendo em até 5 dias', 'Prazo acima de 5 dias', 'Sem prazo definido']
+  const maiorPrazoTotal = Math.max(...prazoLabels.map((label) => prazoCounts.find(([prazo]) => prazo === label)?.[1] ?? 0), 1)
 
   return (
     <>
@@ -326,6 +347,32 @@ export default function DashboardPage() {
                       <strong className="bar-value">{total}</strong>
                     </button>
                   ))}
+                </div>
+              </div>
+              <div className="chart-panel chart-panel-wide">
+                <div className="chart-heading">
+                  <div>
+                    <span className="eyebrow">Acompanhamento</span>
+                    <h3>Distribuição por prazo</h3>
+                  </div>
+                  <span className="chart-total">hoje</span>
+                </div>
+                <div className="bar-chart deadline-chart">
+                  {prazoLabels.map((label) => {
+                    const total = prazoCounts.find(([prazo]) => prazo === label)?.[1] ?? 0
+                    const colorClass = label === 'Vencidos'
+                      ? 'bar-expirado'
+                      : label === 'Vencendo em até 5 dias'
+                        ? 'bar-prazo-proximo'
+                        : label === 'Sem prazo definido' ? 'bar-no-deadline' : 'bar-fill-unit'
+                    return (
+                      <div className="bar-row" key={label}>
+                        <span className="bar-label">{label}</span>
+                        <div className="bar-track"><span className={`bar-fill ${colorClass}`} style={{ width: `${(total / maiorPrazoTotal) * 100}%` }} /></div>
+                        <strong className="bar-value">{total}</strong>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </section>
