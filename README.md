@@ -1,9 +1,8 @@
 # 🎨 Gestão SEI Frontend
 
-[![React](https://img.shields.io/badge/React-18-blue?style=flat-square&logo=react)](https://reactjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
-[![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
 
 > 💻 Interface moderna e responsiva para o controle de processos administrativos do SEI.
 
@@ -29,9 +28,10 @@ graph LR
 ## ✨ Funcionalidades Principais
 
 - 🔐 **Autenticação Segura**: Gestão de sessão via JWT com redirecionamento automático.
-- 📊 **Dashboard Inteligente**: Cards com métricas de processos abertos, concluídos e expirados.
-- 🔍 **Busca em Tempo Real**: Filtros dinâmicos e busca global por palavras-chave.
-- 📅 **Gestão de Prazos**: Alertas visuais coloridos baseados na proximidade do vencimento.
+- 📊 **Dashboard Inteligente**: Indicadores percentuais e gráficos por status, unidade e faixa de prazo.
+- 🖱️ **Dashboard Interativo**: Clique nos gráficos para aplicar filtros diretamente à listagem.
+- 🔍 **Busca em Tempo Real**: Filtros por palavra-chave, status, unidade e processos vencidos.
+- 📅 **Gestão de Prazos**: Alertas visuais para vencidos, vencendo em até 5 dias, prazos longos e sem prazo definido.
 - 📥 **Importação de CSV**: Interface amigável para carga de dados em massa com feedback de erros.
 - 📄 **Histórico Detalhado**: Visualização em linha do tempo das tramitações de cada processo.
 
