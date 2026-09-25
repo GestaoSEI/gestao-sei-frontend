@@ -37,7 +37,7 @@ graph LR
 
 ## 🚀 Como Executar
 
-**Pré-requisitos:** Node.js (v18+) e npm/yarn.
+**Pré-requisitos:** Node.js (v20+) e npm/yarn.
 
 1. **Instalar dependências:**
    ```bash
